@@ -7,4 +7,5 @@ wechat.env
 .token
 node_modules/
 out/
+drafts/
 *.mp4

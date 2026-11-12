@@ -1,0 +1,13 @@
+# cover numeric rules
+cover:                               # 风格依据 cover-style-spec.md（2026-10-09 从用户自己的封面里提炼）
+  master: [2350, 1000]
+  export: [900, 383]
+  export_max_bytes: 1000000          # 用 add_material type=image（10MB 上限），这里自设 1MB
+  title_lines: 3                     # 2–3 行；三行 = 品牌名 / 主陈述 / 数字结论
+  title_max_vis_per_line: 9          # 汉字=1，数字/字母≈0.6（“9.9元买1万积分？”≈8.5）
+  title_max_chars_total: 26
+  kicker_max_chars: 16
+  subtitle_max_chars: 14
+  title_min_height_ratio: 0.14       # 主标题字号 ≥ 画布高 14%（参考封面 15–20%）
+  thumb_check_widths: [200, 360]
+

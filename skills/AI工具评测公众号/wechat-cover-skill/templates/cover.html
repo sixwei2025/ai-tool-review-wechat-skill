@@ -1,0 +1,130 @@
+<!doctype html>
+<!-- 袁六伟公众号封面模板 v2b。风格依据 cover-style-spec.md（从用户 2026-09/10 的封面里提炼），只借鉴了 guizang 的“HTML 渲染”思路，没有使用它的代码 -->
+<!-- 2026-10-28：layout=fullbleed = 整图背景铺满 + 文字区暗化/虚化 + 右侧仍保留抠像（禁止无人像） -->
+<html><head><meta charset="utf-8"><style>
+@font-face{font-family:"CoverBlack";src:local("Noto Sans CJK SC Black"),local("Source Han Sans SC Heavy"),local("Alibaba PuHuiTi Heavy"),local("Hiragino Sans GB W6"),local("HiraginoSansGB-W6"),local("Heiti SC Medium"),local("PingFang SC"),url("{{font_black}}");}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:2350px;height:1000px;overflow:hidden;background:#050304;}
+.cv{position:relative;width:2350px;height:1000px;overflow:hidden;font-family:"CoverBlack","Noto Sans CJK SC",sans-serif;
+  background:
+    radial-gradient(ellipse 760px 720px at {{glow_x}}px 430px, rgba(200,18,30,.88) 0%, rgba(130,6,16,.62) 34%, rgba(55,0,6,.35) 62%, rgba(10,2,3,0) 85%),
+    radial-gradient(ellipse 520px 1000px at 2400px 420px, rgba(255,40,36,.75), rgba(160,0,10,.25) 45%, rgba(0,0,0,0) 75%),
+    linear-gradient(90deg,#060304 0%,#0B0506 45%,#1A0607 70%,#120405 100%);}
+/* fullbleed：去掉红光晕底，靠照片铺底 */
+.cv.fullbleed{background:#050304;}
+.bgimg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.55;}
+.cv.fullbleed .bgimg{opacity:1;}
+.bgblur{position:absolute;inset:0;pointer-events:none;display:none;}
+.cv.fullbleed .bgblur{display:block;-webkit-backdrop-filter:blur({{bg_blur_css}}px);backdrop-filter:blur({{bg_blur_css}}px);
+  mask-image:linear-gradient(90deg,#000 0%,#000 40%,rgba(0,0,0,.35) 58%,transparent 70%);
+  -webkit-mask-image:linear-gradient(90deg,#000 0%,#000 40%,rgba(0,0,0,.35) 58%,transparent 70%);}
+.floor{position:absolute;left:0;right:0;bottom:-40px;height:420px;opacity:.35;
+  background:repeating-linear-gradient(90deg,rgba(255,60,60,.0) 0 118px,rgba(255,60,60,.35) 118px 120px),
+             repeating-linear-gradient(0deg,rgba(255,60,60,.0) 0 58px,rgba(255,60,60,.28) 58px 60px);
+  transform:perspective(600px) rotateX(62deg);transform-origin:bottom;-webkit-mask-image:linear-gradient(90deg,#000 0%,rgba(0,0,0,.5) 50%,transparent 75%);}
+.cv.fullbleed .floor{display:none;}
+.arc{position:absolute;border-radius:50%;border:4px solid rgba(255,70,60,.75);box-shadow:0 0 30px rgba(255,40,40,.65),inset 0 0 30px rgba(255,40,40,.35);}
+.streak{position:absolute;height:3px;background:linear-gradient(90deg,rgba(255,40,40,0),rgba(255,70,60,.95),rgba(255,200,170,1),rgba(255,40,40,0));
+  box-shadow:0 0 14px rgba(255,40,40,.9);transform-origin:left center;}
+.dot{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(255,190,140,1),rgba(255,60,40,.6) 40%,rgba(255,0,0,0) 70%);}
+.vig{position:absolute;inset:0;background:radial-gradient(ellipse 1500px 900px at 40% 50%,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%);}
+.cv.fullbleed .vig{background:radial-gradient(ellipse 1600px 900px at 38% 50%,rgba(0,0,0,0) 52%,rgba(0,0,0,.40) 100%);}
+.shade{position:absolute;left:0;top:0;bottom:0;width:1450px;background:linear-gradient(90deg,rgba(4,2,3,.82) 0%,rgba(4,2,3,.55) 60%,rgba(4,2,3,0) 100%);}
+/* fullbleed 文字区暗化：只压左→中，右侧在人像肩线前收干净，勿把脸糊暗 */
+.cv.fullbleed .shade{width:1580px;background:linear-gradient(90deg,rgba(0,0,0,{{text_shade}}) 0%,rgba(0,0,0,{{text_shade_mid}}) 52%,rgba(0,0,0,.12) 78%,rgba(0,0,0,0) 100%);}
+.portrait{position:absolute;left:{{p_left}}px;top:{{p_top}}px;height:{{p_height}}px;z-index:5;
+  filter:drop-shadow(-26px 14px 46px rgba(0,0,0,.55));}  /* classic/fullbleed 都要：暗投影分离；rim 在 render_cover.py 内侧，不画外描边 */
+.txt{position:absolute;left:{{tx}}px;top:0;height:1000px;width:{{tw}}px;display:flex;flex-direction:column;justify-content:center;z-index:6;}
+/* kicker: classic = 金字两侧细线；punch = 红色斜切标签 */
+.kicker{display:flex;align-self:flex-start;align-items:center;gap:30px;color:#E9C46A;font-family:"Noto Sans CJK SC",sans-serif;font-weight:700;font-size:{{kicker_px}}px;letter-spacing:4px;margin-bottom:34px;}
+.kicker i{display:block;height:3px;width:150px;background:linear-gradient(90deg,rgba(233,196,106,0),#E9C46A);}
+.kicker i:last-child{background:linear-gradient(90deg,#E9C46A,rgba(233,196,106,0));}
+/* kr-off：瑞士风眉标——去掉两侧长线、整体左对齐到标题同一条边线 */
+.kicker.kr-off{gap:0;letter-spacing:9px;color:#B9AFA2;font-weight:500;}
+.kicker.kr-off i{display:none;}
+.sub.plain{gap:0;letter-spacing:5px;-webkit-text-fill-color:#CFC6B8;color:#CFC6B8;}
+.sub.plain b{display:none;}
+.ktag{align-self:flex-start;transform:skewX(-12deg);background:linear-gradient(180deg,#E3262F,#A30B16);border:3px solid rgba(255,140,120,.8);
+  box-shadow:0 0 30px rgba(255,30,30,.6),0 10px 20px rgba(0,0,0,.6);padding:10px 48px;margin:0 0 30px 14px;}
+.ktag span{display:block;transform:skewX(12deg);color:#fff;font-size:{{kicker_px}}px;font-weight:900;letter-spacing:6px;font-style:italic;}
+.t{display:block;white-space:nowrap;line-height:{{title_lh}};font-weight:900;letter-spacing:{{title_ls}}px;}
+.t span{display:inline-block;}
+.t.w span{color:#FFFFFF;background:linear-gradient(180deg,#FFFFFF 0%,#FFFFFF 55%,#D9D9D9 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 6px 0 rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(0,0,0,.6));}
+.t.g span{background:linear-gradient(180deg,#FFF6D2 0%,#FBDF86 30%,#EDB548 58%,#C98A26 80%,#F4CF77 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 7px 0 #5A2A06) drop-shadow(0 0 26px rgba(255,170,60,.35));}
+.punch .t span{transform:skewX(-9deg);}
+.punch .t.w span{filter:drop-shadow(0 5px 0 #8C8C8C) drop-shadow(0 9px 0 rgba(0,0,0,.6)) drop-shadow(0 0 24px rgba(0,0,0,.7));}
+.punch .t.g span{filter:drop-shadow(0 5px 0 #8A4A0C) drop-shadow(0 10px 0 rgba(0,0,0,.55)) drop-shadow(0 0 30px rgba(255,150,40,.45));}
+.rule{height:3px;width:{{rule_w}}px;margin:46px 0 30px;background:linear-gradient(90deg,rgba(200,40,40,.9),rgba(233,196,106,.7) 60%,rgba(233,196,106,0));}
+.sub{display:flex;align-self:flex-start;align-items:center;gap:22px;color:#EDEDED;font-family:"Noto Sans CJK SC",sans-serif;font-weight:700;font-size:{{sub_px}}px;letter-spacing:3px;}
+.sub b{display:block;width:26px;height:26px;transform:rotate(45deg);background:linear-gradient(135deg,#F4CF77,#C98A26);box-shadow:0 0 12px rgba(255,180,60,.6);}
+.stag{align-self:flex-start;margin:36px 0 0 14px;transform:skewX(-12deg);background:linear-gradient(180deg,rgba(120,8,14,.92),rgba(60,2,6,.92));
+  border:3px solid rgba(255,80,70,.85);box-shadow:0 0 26px rgba(255,30,30,.55);padding:12px 46px;}
+.stag span{display:block;transform:skewX(12deg);color:#fff;font-size:{{sub_px}}px;font-weight:900;font-style:italic;letter-spacing:3px;}
+.prop{position:absolute;left:{{prop_left}}px;top:{{prop_top}}px;width:310px;padding:22px 28px;border-radius:16px;
+  transform:perspective(900px) rotateY(16deg) rotateZ(-2deg);transform-origin:left center;
+  background:linear-gradient(160deg,rgba(70,8,12,.88),rgba(18,3,5,.88));border:2px solid rgba(255,90,80,.7);
+  box-shadow:0 0 40px rgba(255,30,30,.45),inset 0 0 30px rgba(255,60,60,.12);font-family:"Noto Sans CJK SC",sans-serif;}
+.prop h4{color:#F4CF77;font-size:30px;font-weight:700;letter-spacing:3px;margin-bottom:10px;border-bottom:2px solid rgba(255,90,80,.35);padding-bottom:12px;}
+.prop .row{display:flex;align-items:center;justify-content:space-between;color:#E9DADA;font-size:31px;font-weight:700;padding:6px 0;}
+.prop .ok{color:#F4CF77;font-size:38px;}
+.prop .x{display:flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#E3262F;color:#fff;font-size:30px;box-shadow:0 0 18px rgba(255,40,40,.9);}
+.card{position:absolute;width:300px;height:116px;border-radius:14px;transform:skewX(-6deg);
+  background:linear-gradient(135deg,rgba(90,10,14,.85),rgba(30,4,6,.85));border:2px solid rgba(255,80,70,.75);
+  box-shadow:0 0 22px rgba(255,30,30,.45),inset 0 0 18px rgba(255,60,60,.15);display:flex;align-items:center;gap:22px;padding:0 26px;}
+.card .ic{width:66px;height:66px;border-radius:12px;background:linear-gradient(180deg,#F0444B,#A9121B);display:flex;align-items:center;justify-content:center;color:#fff;font-size:40px;font-weight:900;font-family:"Noto Sans CJK SC",sans-serif;}
+.card .lb{color:#F3D9D9;font-family:"Noto Sans CJK SC",sans-serif;font-weight:700;font-size:34px;white-space:nowrap;}
+
+/* ===== flat：纯黑极简（2026-11-12）=====
+   去掉红晕背景、金色五段渐变、3D 立体投影。只靠字号/字重/留白分层，
+   人像底部渐隐融进黑里，避免白 T 变成一块高亮补丁。 */
+.cv.flat{background:{{flat_bg}};}
+.cv.flat .bgimg{display:none;}
+.cv.flat .floor,.cv.flat .arc,.cv.flat .streak,.cv.flat .dot{display:none;}
+.cv.flat .shade{display:none;}
+.cv.flat .vig{background:radial-gradient(ellipse 1850px 1080px at 34% 46%,rgba(0,0,0,0) 52%,rgba(0,0,0,.66) 100%);}
+.cv.flat .t{font-weight:900;letter-spacing:{{ls_set}}px;}
+.cv.flat .t span{background:none!important;-webkit-background-clip:border-box;-webkit-text-fill-color:currentColor;filter:none!important;color:#F5F5F5;}
+.cv.flat .t.g span{color:{{gold_solid}};}
+.cv.flat .t.dim span{color:#9A9A9A;}
+.cv.flat .t.lat{font-family:"Helvetica Neue","Inter",-apple-system,Arial,sans-serif;font-weight:{{lat_weight}};letter-spacing:{{lat_ls}}px;}
+.cv.flat .t.mid{font-family:"PingFang SC","Noto Sans CJK SC",-apple-system,sans-serif;font-weight:500;}
+.cv.flat .t.mid span{color:{{mid_color}};}
+.cv.flat .t.thin{font-family:"PingFang SC","Noto Sans CJK SC",-apple-system,sans-serif;font-weight:300;}
+.cv.flat .portrait{
+  filter:drop-shadow(-34px 10px 60px rgba(0,0,0,.72)) saturate({{port_sat}}) brightness({{port_bright}}) contrast({{port_contrast}});
+  -webkit-mask-image:{{mask_css}};mask-image:{{mask_css}};}
+.cv.flat .rule{height:2px;background:linear-gradient(90deg,{{accent}} 0%,{{accent_fade}} 42%,rgba(0,0,0,0) 100%);margin:{{rule_mt}}px 0 {{rule_mb}}px;}
+.cv.flat .sub span{color:{{sub_color}};font-weight:400;letter-spacing:{{sub_ls}}px;}
+.cv.flat .kicker{color:{{kicker_color}};font-weight:500;letter-spacing:{{kick_ls}}px;}
+.cv.flat .kicker i{display:none;}
+.cv.flat .ktag{background:none!important;border:none!important;box-shadow:none!important;padding:0!important;transform:none!important;margin:0 0 40px!important;}
+.cv.flat .ktag span{transform:none!important;font-style:normal!important;color:{{kicker_color}}!important;font-weight:500!important;letter-spacing:{{kick_ls}}px!important;}
+.cv.flat .kicker .sq{display:block;width:{{kick_sq}}px;height:{{kick_sq}}px;background:{{accent}};margin-right:{{kick_sq_gap}}px;}
+</style></head><body><div class="cv {{style}} {{layout}} {{flat_cls}}">
+{{bg_layer}}
+<div class="bgblur"></div>
+{{floor_html}}
+{{fx_html}}
+<div class="shade"></div>
+{{prop_html}}
+{{portrait_html}}
+{{cards_html}}
+<div class="vig"></div>
+<div class="txt" id="txt">
+{{kicker_html}}
+{{title_html}}
+{{sub_html}}
+</div>
+</div>
+<script>
+window.addEventListener('load',async()=>{await document.fonts.ready;
+const R=e=>{const r=e.getBoundingClientRect();return {x:Math.round(r.left),y:Math.round(r.top),w:Math.round(r.width),h:Math.round(r.height)}};
+const q=s=>document.querySelector(s);
+const titles=[...document.querySelectorAll('.t')].map(d=>{const s=d.querySelector('span'),a=R(d),b=R(s);return {x:b.x,w:b.w,y:a.y,h:a.h}});
+const por=q('#portrait');
+const out={titles,prop:q('#prop')?R(q('#prop')):null,kicker:q('#kick')?R(q('#kick')):null,sub:q('#sub')?R(q('#sub')):null,cards:[...document.querySelectorAll('.card')].map(R),
+ portrait:por?R(por):null,fonts:document.fonts.check('900 100px CoverBlack')?'black':'fallback'};
+const p=document.createElement('pre');p.style.display='none';p.textContent='QA='+JSON.stringify(out);document.body.appendChild(p);});
+</script></body></html>

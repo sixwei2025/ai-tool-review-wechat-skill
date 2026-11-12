@@ -1,0 +1,35 @@
+{
+  "_doc": "六伟 2026-10-17 认可的默认封面风格，这里只放风格参数（版式、配色、字号、压暗、渐隐、标签条和角标样式）。内容字段 kicker / title_lines / subtitle / square_badge / background / bg_subject_x 必须在每篇 brief 里写，缺了就报错（layout=fullbleed 时可省略 bg_subject_x）。示例见 example-brief-xiaowangzi.json，样张：runs/2026-10-16-xiaowangzi-3d/v2/build/cover/。【硬规则 2026-10-28】对外封面一律真人抠像 IP 露出（默认 owner_cutout_hd）；禁止 portrait:false。layout 默认 classic；fullbleed = 整图背景铺满 + 文字区暗化/虚化 + 右侧仍保留抠像（不是去人像）。",
+  "style": "classic",
+  "kicker_tag": true,
+  "gold_line": 2,
+  "bg_brightness": 0.88,
+  "bg_subject_target_x": 1470,
+  "bg_fade_px": 360,
+  "bg_opacity": 1.0,
+  "bg_position": "center",
+  "rim_strength": 0.14,
+  "title_max_px": 205,
+  "kicker_px": 50,
+  "sub_px": 52,
+  "palette": {
+    "tag_top": "#E3262F",
+    "tag_bottom": "#A30B16",
+    "badge_fill": "#C8102E",
+    "badge_outline": "#FFD68C",
+    "badge_text": "#FFFFFF",
+    "canvas_bg": "#080405",
+    "_css_ref": "白/金两行标题、金色细线、红色光晕在 templates/cover.html 里（金 #FFF6D2→#C98A26，红光 #D61622）"
+  },
+  "badge_style": {
+    "font_px": 64,
+    "radius": 14,
+    "outline_width": 3,
+    "pad_x": 32,
+    "pad_y": 22,
+    "pos": [
+      40,
+      40
+    ]
+  }
+}

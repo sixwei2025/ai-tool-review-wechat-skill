@@ -21,7 +21,7 @@
 npx skills add sixwei2025/ai-tool-review-wechat-skill
 ```
 
-[为什么重做 2.0](#一为什么重做-20旧版评测号的-4-大病根与彻底纠偏) · [唤醒暗号与双号分流](#二唤醒暗号与双公众号分流规则) · [六步全自动流水线](#三20-六步全自动评测流水线) · [四大评测赛道与模板](#四四大评测赛道与五幕高密度模板) · [汇芯红六套排版骨架](#五视觉交付汇芯红六套排版骨架按题材直选) · [关于作者与台州汇芯](#关于作者与公司品牌袁六伟--台州汇芯)
+[为什么重做 2.0](#一为什么重做-20旧版评测号的-4-大病根与彻底纠偏) · [唤醒暗号与双号分流](#二唤醒暗号与双公众号分流规则) · [六步全自动流水线](#三20-六步全自动评测流水线) · [四大评测赛道与模板](#四四大评测赛道与五幕高密度模板) · [六套封面与六套骨架](#五视觉交付六套杂志风封面--汇芯红六套排版骨架) · [关于作者与台州汇芯](#关于作者与公司品牌袁六伟--台州汇芯)
 
 </div>
 
@@ -86,7 +86,26 @@ npx skills add sixwei2025/ai-tool-review-wechat-skill
 
 ---
 
-## 五、视觉交付：汇芯红六套排版骨架（按题材直选）
+## 五、视觉交付：六套杂志风封面 + 汇芯红六套排版骨架
+
+### 5.1 封面引擎：六套高客单价杂志风主题 + DOM 几何硬闸（`wechat-cover-skill`）
+
+彻底告别廉价培训班海报式的粗金描边字与杂乱网页底图，内置与自动化公众号完全同源的 `render_cover_themes.py`（Playwright + Chrome 渲染，自动检测 `1334px` 1:1 裁切安全线与防压脸硬闸）：
+
+<p align="center">
+  <img src="assets/showcase/00-cover-six.jpg" alt="六套高客单价杂志风封面总览" width="100%" />
+</p>
+
+| 封面主题 ID | 中文名 | 最佳评测场景 |
+| :--- | :--- | :--- |
+| **`brand`** | **汇芯红** | 通用主力，米白纸感底 + 汇芯红点睛，与正文排版一脉相承 |
+| **`indigo`** | **靛蓝瓷** | AI 模型/工具深度实测、技术拆解、产品更新 |
+| **`swiss`** | **瑞士蓝** | 多模型同题横评、榜单盘点、纯数据对比 |
+| **`midnight`** | **午夜墨** | 带硬数字的算账复盘、ROI 对比、深度长文 |
+| **`paper`** | **纸本墨** | Agent Skill 实操教程、方法论、配置清单 |
+| **`kraft`** | **牛皮纸** | 踩坑复盘、避坑实录 |
+
+### 5.2 正文排版：汇芯红六套手机骨架（按题材直选）
 
 废除旧版“按星期一到星期六轮换”，改为**按评测内容结构直接匹配最合适的汇芯红 `#C8102E` 骨架**：
 
@@ -107,9 +126,13 @@ npx skills add sixwei2025/ai-tool-review-wechat-skill
 
 ## 六、自动化脚本与仓库全景目录
 
-### 6.1 三条命令跑通「转换 → 装配外壳 → 硬闸校验 → 推箱」
+### 6.1 四条命令跑通「封面渲染 → 骨架转换 → 装配外壳 → 硬闸校验」
 
 ```bash
+# 0. 渲染高客单价杂志风封面（自动跑 1334px 1:1 裁切安全线与防压脸 DOM 硬闸）
+/opt/homebrew/bin/python3.11 skills/AI工具评测公众号/wechat-cover-skill/scripts/render_cover_themes.py \
+  --brief cover_brief.json --themes brand --out /tmp/cover
+
 # 1. Markdown 转微信内联 HTML 草稿 JSON（自动渲染斑马纹表格与代码块）
 python3 skills/AI工具评测公众号/scripts/markdown_to_wechat_article.py \
   --md skills/AI工具评测公众号/examples/sample-topic/03-review-article.example.md \
@@ -137,19 +160,20 @@ python3 skills/AI工具评测公众号/scripts/validate_review_article.py \
 ai-tool-review-wechat-skill/
 ├── README.md                                        # 仓库总览与 2.0 架构说明
 ├── LICENSE                                          # MIT 开源许可
-├── assets/showcase/                                 # 汇芯红六套骨架预览与成稿切片
+├── assets/showcase/                                 # 六套杂志风封面、汇芯红六套骨架预览与成稿切片
 └── skills/AI工具评测公众号/
     ├── SKILL.md                                     # 【总控入口】六步全自动流水线与四个唤醒口令
     ├── references/                                  # 【4 份高密度规范】
     │   ├── 01-benchmark-and-matrix.md               # 对标账号矩阵、双水源雷达与四大评测赛道压测题库
     │   ├── 02-article-structures.md                 # 五个一票否决、四大实战模板、标题公式与 2号/主号尾件分流
-    │   ├── 03-visual-and-media-policy.md            # 实操截图卡七要素、ffmpeg 高清 GIF 与黑红金封面规范
+    │   ├── 03-visual-and-media-policy.md            # 实操截图卡七要素、ffmpeg 高清 GIF 与六套杂志风封面规范
     │   └── 04-tone-and-safety-gates.md              # 反电报碎句、说人话禁词表、内外表达分界与技术类比库
     ├── scripts/                                     # 【全自动可执行工程脚本】
     │   ├── markdown_to_wechat_article.py            # Markdown → 汇芯红六套骨架 JSON 转换器
     │   ├── apply_theme_shell.py                     # 全六套主题专属开篇卡/目录/章节头/END 装配器
     │   ├── validate_review_article.py               # 排版 + 反碎句 + 原件块 + 说人话一体化硬闸校验器
-    │   └── publish_review_draft.py                  # 默认 2号(hao2) / 支持主号(main) 草稿箱 SSH 投递器
+    │   └── publish_review_draft.py                  # 2号(hao2) / 主号(main) 双账号草稿箱 SSH 投递器
+    ├── wechat-cover-skill/                          # 【六套高客单价杂志风封面引擎 + DOM 几何硬闸】
     ├── templates/                                   # 选题与压测方案卡 / 实测取证核价台账模板
     ├── examples/sample-topic/                       # 2.0 完整评测样稿与通过硬闸的 ticket JSON 成品
     └── themes/                                      # 汇芯红 #C8102E 六套手机排版骨架组件库

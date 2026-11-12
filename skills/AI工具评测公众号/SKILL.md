@@ -78,9 +78,17 @@ author: 袁六伟 · 台州汇芯（公众号/视频号：袁六伟）
   4. **算账与选型路由（原件块 ②）**：给出带 `✓ 闭眼入` / `✗ 劝退` 的 **《胜负总表 / 成本算账单 / 人群选型路由表》**。
   5. **干净收口**：一句话最终选型建议 + 一个最小可执行动作。严禁「各有千秋」和稀泥，严禁内部取证黑话进正文。
 
-### 第 4 步 · 汇芯红骨架转换与专属外壳装配
-- **读**：`themes/rotation.md` + `themes/references/theme-<id>.md`
-- **执行命令**：
+### 第 4 步 · 六套杂志风封面渲染 + 汇芯红骨架装配
+- **读**：`wechat-cover-skill/SKILL.md` + `themes/rotation.md`
+- **4.1 渲染封面（严禁旧版粗金描边字与杂乱网页底图，统一用 `render_cover_themes.py` 六套高客单价杂志风主题）**：
+  - 选型：`brand`（汇芯红·通用）、`indigo`（靛蓝瓷·AI工具/产品技术）、`swiss`（瑞士蓝·数据/横评）、`midnight`（午夜墨·算账复盘）、`paper`（纸本墨·教程/Skill）、`kraft`（牛皮纸·踩坑故事）。
+  - 执行命令（需用安装了 Playwright 的 `/opt/homebrew/bin/python3.11`）：
+    ```bash
+    /opt/homebrew/bin/python3.11 skills/AI工具评测公众号/wechat-cover-skill/scripts/render_cover_themes.py \
+      --brief cover_brief.json --themes brand --out ./assets/cover
+    ```
+  - **硬闸**：必须显示 `OK ... 右边界 <= 安全线 1334` 且不压人脸，随后导出 `900×383` 的 `cover_900x383.jpg`。
+- **4.2 正文骨架转换与专属外壳装配**：
   ```bash
   # ① Markdown 转主题基础草稿 JSON（支持原生 Markdown 表格与代码块）
   python3 skills/AI工具评测公众号/scripts/markdown_to_wechat_article.py \
@@ -161,7 +169,11 @@ skills/AI工具评测公众号/
 │   ├── topic-and-plan-card.md                # 选题与压测方案卡
 │   └── evidence-ledger.md                    # 实测取证与官网核价台账
 ├── examples/                                 # 【2.0 标杆样板间】
-│   └── sample-topic/                         # 含完整 Markdown 样稿與转换装配后的 JSON 成品
+│   └── sample-topic/                         # 含完整 Markdown 样稿与转换装配后的 JSON 成品
+├── wechat-cover-skill/                       # 【六套高客单价杂志风封面引擎 + DOM 几何硬闸】
+│   ├── SKILL.md                              # 封面规范与六套主题选型
+│   ├── assets/owner_cutout_hd.png            # 真人高清抠像与 face_box 坐标
+│   └── scripts/render_cover_themes.py        # 6套杂志风（brand/indigo/swiss/midnight/paper/kraft）渲染器
 └── themes/                                   # 【汇芯红 #C8102E 六套手机排版骨架】
     ├── palette.md                            # 汇芯红主色板
     ├── rotation.md                           # 按评测题材选骨架决策表

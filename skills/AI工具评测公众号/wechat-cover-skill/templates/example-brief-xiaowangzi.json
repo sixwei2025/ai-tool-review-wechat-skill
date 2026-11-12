@@ -1,0 +1,12 @@
+{
+  "_doc": "示例 brief。新封面复制本文件，改掉全部内容字段；风格参数不用写，自动继承 default-brief.json。相对路径按 brief 文件所在目录解析。",
+  "kicker": "Opus 5.5 · 3D游戏",
+  "title_lines": [
+    "一个人16天",
+    "把小王子做成游戏"
+  ],
+  "subtitle": "书里的星球能逛了",
+  "square_badge": "小王子3D游戏",
+  "background": "../assets/default-bg-frame.jpg",
+  "bg_subject_x": 0.458
+}
