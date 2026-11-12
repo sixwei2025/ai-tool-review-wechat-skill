@@ -1,48 +1,27 @@
-# 汇芯红六套骨架（2号排版主题）
+# 汇芯红六套骨架（AI 评测公众号排版唯一来源）
 
-默认主色 **`#C8102E`（汇芯红）**，六套骨架按天轮换，不必每次问用哪套。使用者可改主色，但建议整套统一替换，避免混色。
+默认主色 **`#C8102E`（汇芯红）**。六套骨架**按评测内容结构与题材选型**（见 `rotation.md`），一篇一套，绝不混搭。
 
-## 三条原则
+## 三条铁律
 
-1. **汇芯红六套骨架**（本目录）— 主色可配置，默认 `#C8102E`
-2. **乱码硬闸** — 推箱前消毒：`&quot;`→`"`、去反引号、禁 `*-gradient`（改纯色如 `#FCA5A5`）
-3. **只进草稿箱** — 禁止群发；群发须负责人批准
+1. **按内容选骨架，必跑外壳装配** — 转换后必跑 `scripts/apply_theme_shell.py --theme <id>` 装配主题专属开篇卡、目录短标（每格 3–6 字）、编号章节与 END。
+2. **乱码与排版硬闸** — 推箱前由 `scripts/validate_review_article.py` 强制拦截：禁 `<div>`/`class`/`id`、禁双重转义 `&amp;quot;`、禁残留反引号、禁渐变 `*-gradient`、段落 ≤80 字（段均 35–55 字，零电报碎句）、至少 2 个可复制原件块（`white-space:pre-wrap`）。
+3. **只进草稿箱** — 默认投递 **2号（`--account hao2`）**，主号（`--account main`）按需切换；只存草稿预览，绝不自动群发。
 
-**已废弃**：黑金 heijin / hongjin / moyured 作为默认排版。
-
-## 目录
+## 目录结构
 
 ```
 themes/
-  README.md
-  palette.md
-  rotation.md
+  README.md                  ← 本说明
+  palette.md                 ← 汇芯红主色板定义
+  rotation.md                ← 按评测内容结构选骨架决策表
   references/
-    theme-index.md
-    common-components.md
-    theme-magazine-card.md
-    theme-classic-edit.md
-    theme-minimal-line.md
-    theme-zen-space.md
-    theme-ticket.md
-    theme-journal.md
+    theme-index.md           ← 六套骨架索引与下划线 CSS 权威表
+    common-components.md     ← 跨主题通用组件（代码块/图片/GIF/对比表）
+    theme-ticket.md          ← 单品评测/避坑首选：票据凭证风
+    theme-magazine-card.md   ← 多工具横评/清单首选：杂志快讯卡
+    theme-classic-edit.md    ← Skill深扒/深度观点首选：经典编辑风
+    theme-journal.md         ← 工作流复盘/长测首选：内刊手记风
+    theme-minimal-line.md    ← 极客短评/设计评论：极简细线风
+    theme-zen-space.md       ← 行业随笔：禅意留白风
 ```
-
-上游开源骨架提供六套版式差异（开篇组件/密度/装饰/字号）；本目录主色与强调色为汇芯红系。**禁止把六套排成同一套红白。**
-
-## 轮换
-
-见 `rotation.md`：一周约 5～7 篇，一天一骨架。
-
-## 乱码硬闸检查清单（可执行）
-
-推箱前对 HTML 自检，任一项失败则不推：
-
-1. 文本节点不得出现字面量 `&quot;` / `&amp;quot;` → 换成真正的 `"`
-2. 正文 HTML 不得残留 Markdown 反引号 `` ` ``
-3. 禁止 `linear-` / `radial-` / `conic-gradient` → 改为纯色背景（如 `#FCA5A5`）
-4. 图说：12px（或≤13）+ 灰色（`#A3A3A3` / `#9CA3AF`）+ 居中；禁止正文色（15px+#444）当图说
-5. 金句标红：汇芯红 `#C8102E` + `font-weight:600`；每篇 3～6 处，勿满篇红
-6. 推后用草稿预览确认无乱码
-
-使用者可自备 sanitize/gate 脚本；本开源包不附带含密钥的推箱脚本。

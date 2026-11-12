@@ -1,160 +1,143 @@
 <div align="center">
 
-<img src="assets/showcase/hero-banner.jpg" alt="AI 工具评测公众号 Skill — 真跑实测 + 证据表钉死，AI 工具评测公众号全工作流" width="100%" />
+<img src="assets/showcase/hero-banner.jpg" alt="AI 工具评测公众号 Skill 2.0 — 真跑压测 + 高价值原件 + 汇芯红六套骨架全自动推草稿箱" width="100%" />
 
-# AI 工具评测公众号全工作流 Skill
-### `ai-tool-review-wechat-skill` · 选题打分 → 真跑取证 → 一页纸拍板 → 说人话硬闸 → 汇芯红推草稿箱
+# AI 工具评测公众号全自动 Skill（2.0 重构版）
+### `ai-tool-review-wechat-skill` · 双水源评测雷达 → 本机沙盒真跑 → 五幕高密度成稿 → 反电报碎句硬闸 → 汇芯红六套骨架直推 2号/主号草稿箱
 
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-Specification-C8102E?style=flat-square)](https://agentskills.io)
-[![Workflow](https://img.shields.io/badge/Workflow-7%20Stages%20·%204%20Approval%20Gates%20·%2023%20Refs-18181B?style=flat-square)](#二七步评测硬闸工作流四道拍板闸)
-[![Quality](https://img.shields.io/badge/Quality-5%20Veto%20Rules%20+%20破万自评≥85分-B45309?style=flat-square)](#三质量护城河五个一票否决--说人话硬闸)
+[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-v2.0%20Autopilot-C8102E?style=flat-square)](https://agentskills.io)
+[![Workflow](https://img.shields.io/badge/Workflow-6%20Auto%20Stages%20·%204%20Core%20Scripts-18181B?style=flat-square)](#二20-六步全自动评测流水线)
+[![Quality](https://img.shields.io/badge/Hard%20Gates-反电报碎句%20+%20原件块≥2%20+%20零法官腔-B45309?style=flat-square)](#三20-四大重构升级砍掉繁琐填表全面脚本硬闸化)
 [![License](https://img.shields.io/badge/License-MIT-059669?style=flat-square)](LICENSE)
 
-> 🔴 **作者：袁六伟 · 台州汇芯**｜一人 AI 公司创业者，学员 7000+，客户 100+，得到 / 华为分享老师  
-> 📮 更多 AI 工具实测与自动化实战，关注 **公众号 / 视频号：袁六伟**
+> 🔴 **作者：袁六伟 · 台州汇芯**｜一人 AI 公司创始人，学员 6000+，服务企业客户 100+，得到 / 华为分享老师  
+> 📮 更多 AI 模型、Skill 实测与一人公司实战，关注 **公众号 / 视频号：袁六伟**
 
-**「我先替你花钱花时间踩坑，你直接抄结论。」**  
-这不是把厂商通稿改写一遍的洗稿提示词，而是一套**证据与结论严格咬合**的 AI 评测号工程体系：内置**真跑/横评/选购/教程/整理五轨分流**、**四道负责人拍板闸**、**五个一票否决项**、**说人话去 AI 腔硬闸**以及 **汇芯红 `#C8102E` 六套手机排版骨架**。
+**「替老板、创作者和开发者花真金白银踩坑，算清 ROI，直接给能抄走的结论和配置原件。」**  
+这不是把厂商通稿洗一遍的提示词模板，而是一套**本机真跑压测 + 代码级硬闸拦截 + 汇芯红 `#C8102E` 六套手机排版骨架**的一体化评测工程体系。默认投递 **2号（`hao2`）**，支持一键切换 **主号（`main`）**，只进草稿箱预览，绝不自动群发。
 
 ```bash
 # 一键安装 Skill
 npx skills add sixwei2025/ai-tool-review-wechat-skill
 ```
 
-[为什么评测文像软文](#一为什么大多数-ai-写的工具评测没人信) · [七步硬闸工作流](#二七步评测硬闸工作流四道拍板闸) · [五个一票否决项](#三质量护城河五个一票否决--说人话硬闸) · [汇芯红六套排版预览](#四视觉交付汇芯红六套排版骨架--真实成稿切片) · [安装与目录](#五快速安装与渐进式知识库目录)
+[为什么重做 2.0](#一为什么重做-20旧版评测号的-4-大病根与彻底纠偏) · [六步全自动流水线](#二20-六步全自动评测流水线) · [四大评测赛道与模板](#三四大评测赛道与五幕高密度模板) · [汇芯红六套排版骨架](#四视觉交付汇芯红六套排版骨架按题材直选) · [脚本用法与目录](#五自动化脚本与仓库全景目录)
 
 </div>
 
 ---
 
-## 一、为什么大多数 AI 写的工具评测没人信？
+## 一、为什么重做 2.0？（旧版评测号的 4 大病根与彻底纠偏）
 
-普通 Agent 写出来的 AI 工具测评通常有三大死穴：
-1. **官宣冒充亲测**：没跑过真实任务，直接把官网 Landing Page 的吹牛参数抄成「亲测好用」。
-2. **各打五十大板**：横评结尾永远是「A 和 B 各有千秋，视个人需求选择」，读者看完还是不知道买哪个。
-3. **满嘴法官腔与大厂黑话**：动辄「先说判决：」「赋能闭环」「不是…而是…」，35 岁的普通职场人根本看不懂。
-
-本 Skill 用 **23 份渐进式规范文档（`references/01~23`）** 把评测标准钉死：**不懂 AI 的 35 岁会计能读懂、能复现、能直接拿走避坑结论，才算合格交稿**。
+| 旧版痛点（1.0 已废弃） | 2.0 全自动硬核方案（现行标准） |
+| :--- | :--- |
+| ❌ **四道人工拍板闸 + 手填一页纸/自评表**，把 Agent 变成填表文员 | ✅ **一句话跑通全链路**：用 `validate_review_article.py` 代码级硬闸替代虚假的大模型打分 |
+| ❌ **强制「一句一段」**，导致满篇 5–10 字电报碎句，阅读廉价感极重 | ✅ **2–3 行自然呼吸短段（35–60 字，上限 ≤80 字）**，连续 3 段 ≤15 字碎句直接报错拦截 |
+| ❌ **依赖「洗稿三步」**，必须等别人先写出爆款才能跟风改写 | ✅ **内置四大评测赛道沙盒压测题库（Benchmark）**，本机终端/浏览器真跑拿一手截图与 GIF |
+| ❌ **转换脚本只支持单一骨架**，其它五套骨架需手工拼 HTML | ✅ **`apply_theme_shell.py` 全量支持六套汇芯红骨架自动注入**（含原生 Markdown 斑马纹表格渲染） |
 
 ---
 
-## 二、七步评测硬闸工作流（四道拍板闸）
+## 二、2.0 六步全自动评测流水线
 
 <p align="center">
-  <img src="assets/showcase/pipeline-architecture.jpg" alt="AI 工具评测公众号七步硬闸工作流架构图" width="100%" />
+  <img src="assets/showcase/pipeline-architecture.jpg" alt="AI 工具评测公众号全自动工作流架构图" width="100%" />
 </p>
 
-本工作流严格实行**「缺拍板不往下走，缺证据不成稿」**：
-
-| 步骤 | 环节 | 核心动作与关联规范 | 交付产出物 | 硬闸（不过直接拦截） |
-| :---: | :--- | :--- | :--- | :--- |
-| **01** | **选题打分与分轨** | `01-选题引擎.md` + `09-真跑与整理分轨.md` | `选题卡.md`（标明真跑/横评/选购/整理） | **拍板闸 ①**：选题未获确认，严禁出大纲 |
-| **02** | **实测取证与核价** | `02-实测取证.md` + `11-真实任务与公平比较.md` | `evidence/`（真实产物截图 + 官网价格表） | 价格/额度只认官网并标查询日期；冲突未明不下死结论 |
-| **03** | **一页纸与标题8选** | `03-标题实验室.md` + `16-结构轮换.md` | `一页纸.md`（独家发现+情绪线+结构牌+8标题） | **拍板闸 ②**：哪怕直接给标题，也必须先过一页纸大纲 |
-| **04** | **按轨撰写正文** | `04-正文模板.md` + `18-说人话表达.md` | 正文 Markdown（一句一段 + 真实截图） | 钩子后 1–2 句必上动图/大图；每 300 字一个刺激点 |
-| **05** | **一票否决与自评** | `06-破万自评.md` + `10-写作审稿标准.md` | 破万自评打分表 + 60 秒说人话自检单 | **拍板闸 ③**：自评 **<85 分** 或触犯 5 大否决项不准交稿 |
-| **06** | **汇芯红排版推箱** | `themes/` 六套骨架 + `22-推草稿箱与乱码硬闸.md` | 375px 预览 HTML + 微信后台草稿 | **拍板闸 ④**：过乱码硬闸，只进草稿箱预览，绝不群发 |
-| **07** | **24h/72h 复盘进化** | `07-复盘进化.md` + `17-标题钩子正文持续进化.md` | 复盘记录与规则迭代补丁 | 翻车当日反哺更新标题与钩子库 |
+| 步骤 | 环节 | 执行动作与关联模块 | 交付物与代码级硬闸 |
+| :---: | :--- | :--- | :--- |
+| **01** | **双水源评测雷达** | 扫 `zsxq-cli` 社群真实痛点 + `aihot` 24h 首发模型/高星 Skill | 产出 3 个实测方向 + 6 个高张力标题候选 |
+| **02** | **沙盒真跑与核价** | 按 `01-benchmark-and-matrix.md` 跑 3–4 道真题；查官网价格并标日期 | 产出 8–12 张红框实操截图卡 + 1–3 张 `ffmpeg` 对比 GIF |
+| **03** | **五幕高密度写稿** | 按 `02-article-structures.md` 四大模板写正文（段均 40–60 字） | **硬闸**：≥2 个可复制原件块（Prompt/配置/算账表）+ 至少 1 处真实翻车 |
+| **04** | **汇芯红骨架装配** | `markdown_to_wechat_article.py` + `apply_theme_shell.py` | 按题材自动装配 `ticket` / `magazine-card` / `classic-edit` 等六套外壳 |
+| **05** | **一体化硬闸校验** | 运行 `validate_review_article.py` + 375px 手机实屏预览 | **硬闸**：零 `<div>`/`class`/`gradient`、零电报碎句、零法官腔、翻案句 ≤2 |
+| **06** | **双账号推草稿箱** | 运行 `publish_review_draft.py --account hao2\|main` | 自动上传图片换微信 CDN URL、返回 `media_id`（只存草稿不群发） |
 
 ---
 
-## 三、质量护城河：五个一票否决 + 说人话硬闸
+## 三、四大评测赛道与五幕高密度模板
 
-### 3.1 五个一票否决项（触犯任意一条直接打回重写）
-1. **无独家发现**：把文章里的工具名字挡住，整篇废话依然成立。
-2. **开篇无「你」**：前 3 句没有读者痛点或具体使用场景，自顾自背诵行业背景。
-3. **只夸不骂**：全文找不出一处真实翻车、报错或已知限制（哪怕是商单广告也必须写真实缺点）。
-4. **结尾和稀泥**：横评结尾写「各有千秋」，不敢明确给出「谁该买哪个、谁千万别碰」的站队结论。
-5. **标题党诈骗**：标题承诺的爽点、福利或实测结论，在正文里没有兑现。
+### 3.1 测什么？（四大核心赛道压测标尺）
+1. **基座与推理/编程大模型（Claude / GPT / Gemini / DeepSeek / Qwen）**：测去 AI 味中文商业改写、400+ 行单页应用一次点亮率、长文档大海捞针幻觉率、首字延迟与百次调用真实 API 账单。
+2. **Agent Skills、MCP 与工作流插件（核心护城河）**：测从零安装与鉴权摩擦耗时、端到端业务闭环交付度、连跑 10 次抗崩率、对比人工手搓省下的时间。
+3. **多模态生成（图像 / 视频 / 语音克隆）**：测中文海报排版准确率、多图角色一致性、大动态运镜废片率、中英混读机械感。
+4. **AI IDE 与智能体宿主（Claude Code / Antigravity / Cursor / WorkBuddy）**：测跨文件重构成功率与浏览器接管边界。
 
-### 3.2 「说人话」八条铁律（`references/18-说人话表达.md`）
-- **材料先于语气**：1200 字以上文章必须指出 ≥5 件可核验材料；证据不够先缩篇幅，不靠形容词凑字数。
-- **禁法官腔**：严禁使用「判决、宣判、裁定、本案、落槌」，一律改为「结论、站队、值不值」。
-- **禁翻案套路与破折号**：严禁满篇「不是…而是…」「你以为…其实…」，正文禁用 `——` 与提示性冒号（「先说结论：」）。
-- **清零互联网黑话**：全面拉黑「赋能、抓手、闭环、底层逻辑、降本增效、说白了、本质上、颠覆、炸裂」。
+### 3.2 怎么写？（五幕结构 + 至少 2 个可带走原件）
+- **专属开篇卡**：划掉一句市场盲目吹捧的旧认知，用红黑大字亮出反差结论（严守开篇卡、目录、首章标题、首段去重硬闸）。
+- **第 1 幕 · 现场立靶与结论先行**：前 2 段必见真实痛点或首屏《胜负总表》+ 第一张实拍 GIF/大图。
+- **第 2 幕 · 亮出公共考卷（原件块 ①）**：直接贴出测试用的 **完整 Prompt 原文 / 终端命令代码块**，读者复制即可复现。
+- **第 3 幕 · 惊艳高光 vs 翻车抓包**：并排展示真实输出截图，红框标出它哪里封神、哪里偷偷删代码或死循环报错。
+- **第 4 幕 · 真金白银算账与选型路由（原件块 ②）**：给出官网价格（标查询日期）与带 `✓ 闭眼入` / `✗ 劝退` 的分级配置单。
+- **第 5 幕 · 尾件分流**：**2号（`hao2`）** 走纯净公域破万尾件（END + 三连引导）；**主号（`main`）** 加挂无二维码红金产品海报。
 
 ---
 
-## 四、视觉交付：汇芯红六套排版骨架 + 真实成稿切片
+## 四、视觉交付：汇芯红六套排版骨架（按题材直选）
 
-内置 **汇芯红 `#C8102E` 六套纯内联 CSS 骨架**（杂志卡 / 经典编辑 / 极简细线 / 禅意留白 / 票据 / 内刊手记），含三看短标（每格 3–6 字）、一句一段呼吸感排版与 3–6 处金句标红：
+废除旧版“按星期一到星期六轮换”，改为**按评测内容结构直接匹配最合适的汇芯红 `#C8102E` 骨架**：
 
 <p align="center">
   <img src="assets/showcase/00-themes-six.jpg" alt="汇芯红六套排版骨架总览" width="100%" />
 </p>
 
-<table>
-  <tr>
-    <td width="50%" align="center">
-      <img src="assets/showcase/09-article-slice-1.png" alt="成稿切片1：开篇看点与核心数据卡" width="96%" />
-      <br /><sub><b>▲ 375px 手机成稿首屏</b>：顶栏期号 + 章节导览 + 结构化数据卡</sub>
-    </td>
-    <td width="50%" align="center">
-      <img src="assets/showcase/10-article-slice-3.png" alt="成稿切片2：PART红标与短段落节奏" width="96%" />
-      <br /><sub><b>▲ 正文阅读节奏</b>：一句一段短段落 + PART 红标锚点 + 验收清单卡</sub>
-    </td>
-  </tr>
-</table>
+| 骨架 ID (`--theme`) | 中文名 | 最佳评测场景 | 开篇标志性组件 |
+| :--- | :--- | :--- | :--- |
+| **`ticket`** | 汇芯红·票据 | **单品深度实测 / 首发快刀斩 / 避坑打假** | 米黄纸感门票凭证（星级 + 编号 + S/A/B/C 等级 + 撕票线） |
+| **`magazine-card`** | 汇芯红·杂志卡 | **多模型/多工具同题横评 / 榜单盘点** | 杂志快讯封面（划掉旧认知 + 红黑大字）+ 横向滑动目录 |
+| **`classic-edit`** | 汇芯红·经典编辑 | **Agent Skill / MCP 深扒 / 重度实操教程** | 白底红光晕引言卡 + 三列看点短标（3–6字）+ 红底编号章节 |
+| **`journal`** | 汇芯红·内刊手记 | **工作流复盘 / 团队长周期落地算账** | 内刊头图卡 + PART 竖线章节 + 精简对照表 |
+| **`minimal-line`** | 汇芯红·极简细线 | **极客短评 / 技术边界犀利剖析** | 上下细线金句 + 48px 超大水印数字章节（红点睛 ≤3 处） |
+| **`zen-space`** | 汇芯红·禅意留白 | **AI 行业深度随笔** | 衬线大字居中金句 + 极简目录 |
 
 ---
 
-## 五、快速安装与渐进式知识库目录
+## 五、自动化脚本与仓库全景目录
+
+### 5.1 三条命令跑通「转换 → 装配外壳 → 硬闸校验 → 推箱」
 
 ```bash
-# 1. 一键安装
-npx skills add sixwei2025/ai-tool-review-wechat-skill
+# 1. Markdown 转微信内联 HTML 草稿 JSON（自动渲染斑马纹表格与代码块）
+python3 skills/AI工具评测公众号/scripts/markdown_to_wechat_article.py \
+  --md skills/AI工具评测公众号/examples/sample-topic/03-review-article.example.md \
+  --title "花 260 元连测 3 款主流编程 AI，我把呼声最高的那个退订了" \
+  --theme ticket --out /tmp/article.base.json
 
-# 2. 直接对 Agent 下指令：
-# 「用 AI工具评测公众号 skill，评测 Cursor 1.0，先出选题卡等我拍板」
-# 「按 AI工具评测公众号，给 Claude / GPT / DeepSeek 做代码能力横评一页纸，用 templates 里的证据表」
+# 2. 注入主题专属开篇封面、目录短标、编号章节头与 END 尾件
+python3 skills/AI工具评测公众号/scripts/apply_theme_shell.py \
+  --article /tmp/article.base.json --theme ticket \
+  --eyebrow "AI CODING BENCHMARK" --strike "跑分第一就等于写代码最强" \
+  --cover-black "连测3款编程AI" --cover-red1 "最火的那个" --cover-red2 "被我当场退订了" \
+  --cover-meta "3轮真实工程压测 · 4张实拍对比 · 2份可抄配置单" \
+  --grade "A" --issue-no "042" --parts-short "省流总表|压测考卷|翻车抓包|终极站队" \
+  --out /tmp/article.final.json
+
+# 3. 跑一体化硬闸校验（排版兼容 + 反电报碎句 + 原件块≥2 + 说人话禁词）
+python3 skills/AI工具评测公众号/scripts/validate_review_article.py \
+  --article /tmp/article.final.json \
+  --md skills/AI工具评测公众号/examples/sample-topic/03-review-article.example.md
 ```
 
-### 仓库全景目录
+### 5.2 仓库目录结构
 
 ```text
 ai-tool-review-wechat-skill/
-├── README.md                                  # 仓库总览与评测工作流架构
-├── LICENSE                                    # MIT 开源许可
-├── assets/showcase/                           # 汇芯红六套骨架、成稿切片与架构图
+├── README.md                                        # 仓库总览与 2.0 架构说明
+├── LICENSE                                          # MIT 开源许可
+├── assets/showcase/                                 # 汇芯红六套骨架预览与成稿切片
 └── skills/AI工具评测公众号/
-    ├── SKILL.md                               # 【总控入口】七步总闸、五轨证据匹配与发布前清单
-    ├── references/                            # 【23 份渐进式专业规范库】
-    │   ├── 01-选题引擎.md ~ 08-范文与反例.md  # 选题打分、实测取证、标题实验室、正文模板、破万自评
-    │   ├── 09-真跑与整理分轨.md               # 真跑/横评/选购/教程/整理五轨边界
-    │   ├── 10-写作审稿标准.md ~ 17-持续进化.md # 公平比较、行为验收、洗稿三步、结构牌轮换
-    │   └── 18-说人话表达.md ~ 23-硬闸备忘.md  # 说人话硬闸、三看短标、一句一段、金句标红、乱码清洗
-    ├── templates/                             # 选题卡 / 一页纸 / 实测证据表 / 自检清单模板
-    ├── examples/                              # 脱敏真实评测范文样例
-    └── themes/                                # 汇芯红 #C8102E 六套手机排版骨架与色板规范
+    ├── SKILL.md                                     # 【总控入口】六步全自动流水线与四个唤醒口令
+    ├── references/                                  # 【4 份高密度规范】
+    │   ├── 01-benchmark-and-matrix.md               # 对标账号矩阵、双水源雷达与四大评测赛道压测题库
+    │   ├── 02-article-structures.md                 # 五个一票否决、四大实战模板、标题公式与 2号/主号尾件分流
+    │   ├── 03-visual-and-media-policy.md            # 实操截图卡七要素、ffmpeg 高清 GIF 与黑红金封面规范
+    │   └── 04-tone-and-safety-gates.md              # 反电报碎句、说人话禁词表、内外表达分界与技术类比库
+    ├── scripts/                                     # 【全自动可执行工程脚本】
+    │   ├── markdown_to_wechat_article.py            # Markdown → 汇芯红六套骨架 JSON 转换器
+    │   ├── apply_theme_shell.py                     # 全六套主题专属开篇卡/目录/章节头/END 装配器
+    │   ├── validate_review_article.py               # 排版 + 反碎句 + 原件块 + 说人话一体化硬闸校验器
+    │   └── publish_review_draft.py                  # 默认 2号(hao2) / 支持主号(main) 草稿箱 SSH 投递器
+    ├── templates/                                   # 选题与压测方案卡 / 实测取证核价台账模板
+    ├── examples/sample-topic/                       # 2.0 完整评测样稿与通过硬闸的 ticket JSON 成品
+    └── themes/                                      # 汇芯红 #C8102E 六套手机排版骨架组件库
 ```
-
----
-
-## 关于作者与开源生态
-
-**袁六伟 · 台州汇芯**：一人 AI 公司创业者，学员 7000+，服务商单客户 100+，覆盖近 20 个行业，得到 / 华为分享老师。AI 变现实战派，自己跑通才拿出来教。
-
-- 公众号：**袁六伟**（微信搜一搜关注，看更多 AI 工具实测与一人公司实战）
-- 视频号：**袁六伟**
-
-这个项目免费开源。如果它帮你的产线省下了每天反复返工的时间，欢迎在右上角点个 ⭐ **Star**，也欢迎转发给身边做内容或一人公司的朋友。
-
-### 同系列开源 Skill 矩阵（袁六伟 · 台州汇芯）
-
-| 仓库 | 领域 | 核心能力 |
-| :--- | :--- | :--- |
-| [**workbuddy-wechat-autopilot**](https://github.com/sixwei2025/workbuddy-wechat-autopilot) | 公众号全链路 | 九步硬闸总控：选题→写稿→真实截图→6套封面→6套排版→三重校验→草稿箱 |
-| [**wechat-cover-skill**](https://github.com/sixwei2025/wechat-cover-skill) | 公众号视觉 | 封面渲染引擎（6套高客单价杂志风 + 黑红金 v2b + DOM 几何硬闸） |
-| [**gzh-million-layout-skill**](https://github.com/sixwei2025/gzh-million-layout-skill) | 公众号排版 | 汇芯红 `#C8102E` 六套 100% 内联 CSS 骨架 + 乱码硬闸 + 配图皮肤 |
-| [**ai-tool-review-wechat-skill**](https://github.com/sixwei2025/ai-tool-review-wechat-skill) | 公众号评测 | AI 工具真跑评测工作流（5项一票否决 + 说人话硬闸 + 证据表） |
-| [**hit-title-expert-skill**](https://github.com/sixwei2025/hit-title-expert-skill) | 爆款标题 | 一次直出 10 条 14–22 字高浓缩狠标题（5大公式 × 5类钩子词） |
-| [**auto-tutorial-skill**](https://github.com/sixwei2025/auto-tutorial-skill) | 短视频工程 | 链接/网页/真机截图 → 3:4 封面 + 1.5x 配音 + 红框标注教程视频 |
-| [**talking-head-video-skill**](https://github.com/sixwei2025/talking-head-video-skill) | 短视频工程 | 1080×1920 竖屏真人口播短视频（ASR 错字校对 + 逐字卡拉OK字幕 + 6项QC） |
-| [**3d-map-video-skill**](https://github.com/sixwei2025/3d-map-video-skill) | 短视频工程 | MapLibre 3D 地形 + WarFX 战争特效（粒子行军/点阵兵力/震屏混音） |
-| [**psych-kepu-video-skill**](https://github.com/sixwei2025/psych-kepu-video-skill) | 短视频工程 | Remotion + JSON 驱动的 15–30s 深色扁平动画心理科普短视频 |
-| [**dark-infographic-video-skill**](https://github.com/sixwei2025/dark-infographic-video-skill) | 短视频工程 | 纯 Python + FFmpeg 暗黑流光数据可视化科普片（含 v2 手机外放配乐） |
-| [**local-video-hub**](https://github.com/sixwei2025/local-video-hub) | AI 团队基建 | 视频版本地 Obsidian：多 AI 员工统一交片、去重门闸与四态流转云台 |
-| [**yuanliuwei-ai-skills**](https://github.com/sixwei2025/yuanliuwei-ai-skills) | 一人公司方法 | PACT 72h 需求验证模型与一人 AI 公司 10 大业务决策模块 |
-| [**book-skill**](https://github.com/sixwei2025/book-skill) | 知识工程 | 上传任意书籍 PDF → 自动提炼方法论生成 `.skill` + 公众号导流文案 |
-| [**huangdi-skill**](https://github.com/sixwei2025/huangdi-skill) | 认知操作系统 | 中国历史八大皇帝（秦始皇/汉武帝/唐太宗等）一手史料认知框架蒸馏 |
-| [**sunrise-tracker**](https://github.com/sixwei2025/sunrise-tracker) | 选题雷达 | 小红书 AI 赛道 10 倍异常流量「低粉爆文」每日早 7 点监测推送 |
