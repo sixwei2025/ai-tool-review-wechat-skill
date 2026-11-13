@@ -23,9 +23,10 @@
   ffmpeg -y -i input.mp4 -vf "fps=12,scale=640:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=128[p];[s1][p]paletteuse=dither=bayer" output.gif
   ```
 
-### 3. 官方一手技术报告与权威第三方榜单（占 15%）
-- 官方 Technical Report / System Card 中的架构拆解图、官方定价套餐页截图（必须裁掉无关导航栏，保留价格与限制小字）。
-- 权威独立基准：LMSYS Chatbot Arena 盲测榜、Artificial Analysis（速度 vs 价格散点图）、SWE-bench 真实得分表。
+### 3. 官方一手技术报告、X（Twitter）热帖与第三方榜单（占 20%）
+- **X（Twitter）原帖与大V实测截图 / Demo 转 GIF**（详见 `references/06-twitter-x-sourcing.md`）：截取官方发布 Thread、一线开发者实测原帖卡片，或将 X 上的 Demo 视频切为 3–5 秒高清 GIF，正文中明确标注 `@handle` 来源。
+- 官方 Technical Report / Blog 中的架构拆解图、官方定价套餐页截图（必须裁掉无关导航栏，保留价格与限制小字）。
+- 权威独立基准：LMSYS Chatbot Arena 盲测榜、Artificial Analysis（速度 vs 价格散点图）、Vals Index 真实得分表。
 
 ### 4. 结构化数据卡与横评表（占 15%，无界面可截时补位）
 - 当展示多维评分、成本算账公式、选型路由时，优先使用当前汇芯红骨架内置的 **斑马纹表格 / 两列或三列数据卡 / 对比摘要卡**。

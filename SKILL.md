@@ -1,6 +1,6 @@
 ---
 name: AI评测公众号
-version: "1.1.0"
+version: "1.2.0"
 description: >-
   AI 大模型、Agent Skill、MCP 插件、AI 编程工具与新功能的硬核真跑评测公众号全自动总控 Skill（2.0 重构版）。
   当用户说「评测雷达」「找评测选题」「实测XX模型/工具/Skill」「写篇XX评测/横评」「跑个评测」时立即使用。
@@ -65,18 +65,20 @@ author: 袁六伟 · 台州汇芯（公众号/视频号：袁六伟）
 
 详细规范按需读取 `references/01~04`，不靠人工填表卡流程，全靠脚本硬闸把关：
 
-### 第 1 步 · 双水源评测雷达与选题卡
-- **读**：`references/01-benchmark-and-matrix.md`
+### 第 1 步 · 三水源评测雷达与选题卡
+- **读**：`references/01-benchmark-and-matrix.md` + `references/06-twitter-x-sourcing.md`
 - **动作**：
   1. 扫内部真问题水源（`zsxq-cli` 社群高频卡点与选型提问）；
-  2. 扫外部首发热点（`aihot` 24h 资讯 + GitHub/MCP 热门 Skill + 海外一手基准）。
+  2. 扫外部首发热点（`aihot` 24h 资讯 + GitHub/MCP 热门 Skill + 海外一手基准）；
+  3. **扫 X（Twitter）一手实测与热帖水源**：按 `references/06-twitter-x-sourcing.md` 检索官方 Thread、高赞 Demo 视频与一线大V真实评价。
 - **产出**：按 `templates/topic-and-plan-card.md` 给出 **3 个差异化实测方向 + Top1 推荐 + 6 个标题候选（数字 + 反差结果 + 可拿走物/流量词）**。
 
-### 第 2 步 · 本机沙盒真跑压测与取证
-- **读**：`references/01-benchmark-and-matrix.md` + `references/03-visual-and-media-policy.md`
+### 第 2 步 · 本机沙盒真跑压测 + X（Twitter）取证
+- **读**：`references/01-benchmark-and-matrix.md` + `references/03-visual-and-media-policy.md` + `references/06-twitter-x-sourcing.md`
 - **动作**：
   - 按四大评测赛道（基座模型 / Agent Skill & MCP / 多模态 / AI IDE）挑 3–4 个真实业务任务，在本机终端、API 或浏览器真跑。
   - **官网核价**：查清官网最新月费/API 单价与免费额度，记录查询日期到 `templates/evidence-ledger.md`。
+  - **X（Twitter）原帖与 Demo 抓图**：通过本机已登录 Chrome 会话截取 X 上的高赞实测推文、官方对比图，遇到大V发布的 Demo 视频直接切 3–5 秒高清 GIF 佐证。
   - **截图与 GIF 加工**：截取 8–12 张真实过程与结果图（裁噪音、打码隐私、套 `#C8102E` 红框高亮），并用 `ffmpeg` 制作 1–3 张流式速度对比或成片效果 GIF。
 
 ### 第 3 步 · 撰写高密度评测正文（四幕/五幕结构：开篇释放结果 → 核心用法与方法 → 算账与选型 → 底层原理与人文延伸，不讲「踩了什么坑」）
