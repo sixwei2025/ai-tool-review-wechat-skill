@@ -1,5 +1,10 @@
 # 更新日志
 
+## v1.2.2 · 2026-11-13
+
+- **新增 X（Twitter）防风控四条红线**：在 `references/06-twitter-x-sourcing.md` 明确小号 Cookie 隔离、单次 `limit ≤ 15`、固定 IP 与手动截图兜底策略。
+- **新增「快节奏 · 情绪张力 · 多图少字 · 信息增量」写作标尺**：在 `references/02-article-structures.md` 确立 1000–1600 字高密度短篇 + 8–12 张真图/GIF（每 120–150 字一图）的手机端快刷标准。
+
 ## v1.2.1 · 2026-11-13
 
 - **新增 X（Twitter）一键抓取脚本**：新增 `scripts/fetch_x_evidence.py`（基于开源 `vladkens/twscrape`，MIT 许可），支持通过浏览器 Cookie 免官方 API Key 搜索 X 高赞推文、下载高清原图，并将推文中的 Demo 视频自动切片为 `≤3MB` 高清 GIF。

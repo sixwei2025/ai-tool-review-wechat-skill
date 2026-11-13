@@ -54,3 +54,13 @@
 /opt/homebrew/bin/python3.11 skills/AI工具评测公众号/scripts/fetch_x_evidence.py \
   --query '"Gemini 4 Hydrogen" min_faves:20' --limit 15 --gif --out ./assets/x
 ```
+
+---
+
+## 五、X（Twitter）风控评估与防封四条红线
+
+按每天写 1–2 篇的频率，单次拉 10–15 条属于极低频的个人阅读级请求，正常不容易触发批量爬虫封号；但为了绝对稳妥，必须守住以下四条红线：
+1. **绝对不用主号 Cookie，专配 1–2 个小号**：`twscrape` 走非官方 GraphQL 接口，只用小号 Cookie 跑抓取，保证主号与日常刷推零风险。
+2. **单次 `--limit` 压在 `10–15` 条以内**：严禁跑 `--limit 100` 或高频定时轮询，按需“写一篇拉一次”。
+3. **代理 IP 保持固定，不频繁切国家节点**：同一 Cookie 短时间跨区跳 IP 最容易触发异常登录风控弹窗。
+4. **手动刷推截图随时兜底**：平时手动刷 X 顺手截的图或录的 3 秒屏直接丢进 `assets/`，脚本无缝接管排版推箱。
