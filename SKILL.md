@@ -1,6 +1,6 @@
 ---
 name: AI评测公众号
-version: "1.3.0"
+version: "1.2.6"
 description: >-
   AI 大模型、Agent Skill、MCP 插件、AI 编程工具与新功能的硬核真跑评测公众号全自动总控 Skill（2.0 重构版）。
   当用户说「评测雷达」「找评测选题」「实测XX模型/工具/Skill」「写篇XX评测/横评」「跑个评测」时立即使用。
@@ -93,11 +93,11 @@ author: 袁六伟 · 台州汇芯（公众号/视频号：袁六伟）
 
 ### 第 4 步 · 六套杂志风封面渲染 + 汇芯红骨架装配
 - **读**：`wechat-cover-skill/SKILL.md` + `themes/rotation.md`
-- **4.1 渲染封面（严禁旧版粗金描边字与杂乱网页底图，统一用 `render_cover_themes.py` 六套构图版式 × 六套杂志风主题，人像必留 + 汇芯 IP 铭牌露出）**：
-  - 选型（支持 `--layout` 自由切换版式）：`brand`（汇芯红·`editorial` 经典双栏）、`indigo`（靛蓝瓷·`duotone-split` 硬切双色）、`swiss`（瑞士蓝·`swiss-grid` 细线网格）、`midnight`（午夜墨·`cinema` 电影宽银幕）、`paper`（纸本墨·`masthead` 大刊报头破框）、`kraft`（牛皮纸·`archive-card` 档案相框）。
-  - 执行命令（内置 Headless Chrome 兜底，`python3` 即可直接运行）：
+- **4.1 渲染封面（严禁旧版粗金描边字与杂乱网页底图，统一用 `render_cover_themes.py` 六套高客单价杂志风主题）**：
+  - 选型：`brand`（汇芯红·通用）、`indigo`（靛蓝瓷·AI工具/产品技术）、`swiss`（瑞士蓝·数据/横评）、`midnight`（午夜墨·算账复盘）、`paper`（纸本墨·教程/Skill）、`kraft`（牛皮纸·踩坑故事）。
+  - 执行命令（需用安装了 Playwright 的 `/opt/homebrew/bin/python3.11`）：
     ```bash
-    python3 skills/AI工具评测公众号/wechat-cover-skill/scripts/render_cover_themes.py \
+    /opt/homebrew/bin/python3.11 skills/AI工具评测公众号/wechat-cover-skill/scripts/render_cover_themes.py \
       --brief cover_brief.json --themes brand --out ./assets/cover
     ```
   - **硬闸**：必须显示 `OK ... 右边界 <= 安全线 1334` 且不压人脸，随后导出 `900×383` 的 `cover_900x383.jpg`。
