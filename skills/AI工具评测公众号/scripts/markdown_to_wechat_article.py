@@ -481,183 +481,46 @@ def quote_block_html(values: list[str]) -> str:
     return f'<section style="{key_style()}">' + "".join(rows) + "</section>"
 
 
-def _render_takeaway_card(lines: list[str]) -> str | None:
-    """将【原件 X · 标题】或【...卡/表/清单】代码块渲染为精致、紧凑的结构化原生卡片，告别臃肿的灰底 pre-wrap 大段折行。"""
-    non_empty = [l.strip() for l in lines if l.strip()]
-    if not non_empty:
-        return None
-    first = re.sub(r"^#\s*", "", non_empty[0])
-    m_title = re.match(r"^【(.+?)】$", first)
-    if not m_title:
-        return None
-
-    raw_title = m_title.group(1).strip()
-    if "·" in raw_title:
-        badge, card_title = [x.strip() for x in raw_title.split("·", 1)]
-    else:
-        badge, card_title = "可复制卡", raw_title
-
-    body_lines = [l.rstrip() for l in lines[lines.index(next(l for l in lines if l.strip())) + 1 :] if l.strip()]
-
-    # 判断是否是包含终端命令的命令卡
-    has_commands = any(
-        not l.strip().startswith(("#", "1", "2", "3", "4", "5", "6", "7", "▸", "✓", "✗", "第"))
-        and re.match(r"^[a-zA-Z0-9_./$-]+", l.strip())
-        for l in body_lines
-    )
-
-    mono = "'SF Mono',Consolas,Monaco,monospace"
-    rows_html: list[str] = []
-
-    if has_commands:
-        cmd_buf: list[str] = []
-
-        def flush_cmds() -> None:
-            if not cmd_buf:
-                return
-            cmd_ps = []
-            for idx_c, c in enumerate(cmd_buf):
-                bdr = "border-top:1px solid #334155;padding-top:6px;margin-top:6px;" if idx_c > 0 else ""
-                cmd_ps.append(
-                    f'<section style="{bdr}font-family:{mono};font-size:12px;line-height:1.55;color:#F8FAFC;word-break:break-all;">'
-                    f'<span style="color:#F87171;font-weight:700;margin-right:6px;"><span leaf="">$</span></span>'
-                    f'<span leaf="">{html.escape(c)}</span></section>'
-                )
-            rows_html.append(
-                f'<section style="margin:4px 0 6px;padding:10px 12px;background:#1E293B;border-radius:6px;">{"".join(cmd_ps)}</section>'
-            )
-            cmd_buf.clear()
-
-        for raw_l in body_lines:
-            s = raw_l.strip()
-            if s.startswith("#"):
-                flush_cmds()
-                comment = s.lstrip("#").strip()
-                if not comment:
-                    continue
-                rows_html.append(
-                    f'<section style="margin:6px 0 2px;font-size:12.5px;line-height:1.6;color:{_T["ink_lead"]};font-weight:700;">'
-                    f'<span leaf="">{inline(comment)}</span></section>'
-                )
-            else:
-                cmd_buf.append(s)
-        flush_cmds()
-    else:
-        for idx, raw_l in enumerate(body_lines):
-            s = raw_l.strip()
-            m_num = re.match(r"^(?:(\d+)[.、\s]+|(第[一二三四五六七八九十]+步)\s*·?\s*)(.+)$", s)
-            if m_num:
-                num_tag = m_num.group(1) or m_num.group(2)
-                rest = m_num.group(3).strip()
-                border_top = "border-top:1px solid #F3F4F6;padding-top:9px;margin-top:9px;" if rows_html else ""
-                if "→" in rest:
-                    k, v = [x.strip() for x in rest.split("→", 1)]
-                    rows_html.append(
-                        f'<section style="{border_top}display:flex;align-items:baseline;">'
-                        f'<span style="flex:none;display:inline-block;background:{_T["red_soft"]};color:{_T["red"]};'
-                        f'font-size:11px;font-weight:800;padding:1px 6px;border-radius:4px;margin-right:7px;">'
-                        f'<span leaf="">{html.escape(num_tag)}</span></span>'
-                        f'<section style="flex:1;font-size:13px;line-height:1.65;color:{_T["ink"]};">'
-                        f'<span style="color:{_T["ink_lead"]};font-weight:700;"><span leaf="">{inline(k)}</span></span>'
-                        f'<span style="color:{_T["grey"]};"><span leaf=""> · </span></span>'
-                        f'<span leaf="">{inline(v)}</span></section></section>'
-                    )
-                else:
-                    rows_html.append(
-                        f'<section style="{border_top}display:flex;align-items:center;margin-bottom:3px;">'
-                        f'<span style="flex:none;display:inline-block;background:{_T["red"]};color:#ffffff;'
-                        f'font-size:11px;font-weight:800;padding:1px 6px;border-radius:4px;margin-right:7px;">'
-                        f'<span leaf="">{html.escape(num_tag)}</span></span>'
-                        f'<span style="font-size:13.5px;color:{_T["ink_lead"]};font-weight:800;">'
-                        f'<span leaf="">{inline(rest)}</span></span></section>'
-                    )
-                continue
-
-            if s.startswith(("▸", "✓", "✗", "-", "•")):
-                marker = s[0]
-                rest = s[1:].strip()
-                m_color = _T["red"] if marker in ("▸", "✓") else _T["grey"]
-                if "→" in rest:
-                    k, v = [x.strip() for x in rest.split("→", 1)]
-                    rows_html.append(
-                        f'<section style="padding-left:8px;margin-top:3px;font-size:12.5px;line-height:1.65;color:{_T["ink"]};">'
-                        f'<span style="color:{m_color};font-weight:800;margin-right:4px;"><span leaf="">{html.escape(marker)}</span></span>'
-                        f'<span style="color:{_T["grey"]};"><span leaf="">{inline(k)}：</span></span>'
-                        f'<span style="color:{_T["ink_lead"]};font-weight:600;"><span leaf="">{inline(v)}</span></span></section>'
-                    )
-                else:
-                    rows_html.append(
-                        f'<section style="padding-left:8px;margin-top:3px;font-size:12.5px;line-height:1.65;color:{_T["ink"]};">'
-                        f'<span style="color:{m_color};font-weight:800;margin-right:4px;"><span leaf="">{html.escape(marker)}</span></span>'
-                        f'<span leaf="">{inline(rest)}</span></section>'
-                    )
-                continue
-
-            if "→" in s:
-                k, v = [x.strip() for x in s.split("→", 1)]
-                border_top = "border-top:1px solid #F3F4F6;padding-top:8px;margin-top:8px;" if rows_html else ""
-                rows_html.append(
-                    f'<section style="{border_top}font-size:13px;line-height:1.65;color:{_T["ink"]};">'
-                    f'<span style="color:{_T["ink_lead"]};font-weight:700;"><span leaf="">{inline(k)}</span></span>'
-                    f'<span style="color:{_T["red"]};font-weight:700;"><span leaf=""> → </span></span>'
-                    f'<span leaf="">{inline(v)}</span></section>'
-                )
-            else:
-                rows_html.append(
-                    f'<section style="margin-top:4px;font-size:12.5px;line-height:1.65;color:{_T["grey"]};">'
-                    f'<span leaf="">{inline(s)}</span></section>'
-                )
-
-    return (
-        f'<section data-takeaway="1" style="margin:18px {_T["pad"]} 22px;background:#ffffff;'
-        f'border:1px solid {_T["card_bd"]};border-top:3px solid {_T["red"]};border-radius:8px;'
-        f'box-shadow:0 2px 10px rgba(0,0,0,0.03);overflow:hidden;{p_base()}">'
-        f'<section style="padding:9px 14px;background:{_T["red_soft"]};border-bottom:1px solid {_T["hair"]};'
-        f'display:flex;align-items:center;justify-content:space-between;">'
-        f'<section style="display:flex;align-items:center;min-width:0;flex:1;">'
-        f'<span style="flex:none;display:inline-block;background:{_T["red"]};color:#ffffff;font-size:10px;font-weight:800;'
-        f'padding:2px 7px;border-radius:4px;margin-right:8px;letter-spacing:0.5px;white-space:nowrap;"><span leaf="">{html.escape(badge)}</span></span>'
-        f'<span style="font-size:13.5px;color:{_T["ink_title"]};font-weight:800;line-height:1.4;"><span leaf="">{html.escape(card_title)}</span></span>'
-        f'</section>'
-        f'<span style="flex:none;font-size:10px;color:{_T["grey"]};margin-left:8px;white-space:nowrap;"><span leaf="">可复制</span></span>'
-        f'</section>'
-        f'<section style="padding:12px 14px;">{"".join(rows_html)}</section>'
-        f'</section>'
-    )
-
-
 def code_block_html(values: list[str]) -> str:
-    card = _render_takeaway_card(values)
-    if card is not None:
-        return card
+    non_empty = [
+        l.strip()
+        for l in values
+        if l.strip() and not re.match(r"^#?\s*【.+?】$", l.strip())
+    ]
+    has_chinese_prose = any(len(re.findall(r"[\u4e00-\u9fff]", l)) >= 6 for l in non_empty if not l.startswith("#"))
+    is_shell_cmd = any(
+        re.match(r"^(git|cd|npm|npx|python3?|bash|sh|curl|brew|open|pip|docker|uv|claude|codex|gemini)\b", l)
+        for l in non_empty
+    )
+    if has_chinese_prose and not is_shell_cmd:
+        rows = []
+        for idx, raw in enumerate(non_empty):
+            bdr = "border-top:1px dashed #F3E8E8;padding-top:8px;margin-top:8px;" if idx > 0 else ""
+            rows.append(
+                f'<section style="{bdr}font-size:13.5px;line-height:1.75;color:{_T["ink_lead"]};">'
+                f'<span leaf="">{inline(raw)}</span></section>'
+            )
+        return (
+            f'<section data-takeaway="1" style="margin:18px {_T["pad"]} 22px;padding:14px 16px;'
+            f'background:#FAF8F5;border:1px solid #E5E0D8;border-left:3px solid {_T["red"]};'
+            f'border-radius:8px;{p_base()}">{"".join(rows)}</section>'
+        )
+
     mono = "'SF Mono',Consolas,Monaco,monospace"
     rows = []
-    for raw in values:
-        if not raw.strip():
+    for raw in non_empty:
+        if raw.startswith("#"):
             continue
-        s = raw.strip()
-        if s.startswith("#"):
-            rows.append(
-                f'<section style="margin:4px 0 2px;font-family:{mono};font-size:12px;line-height:1.6;color:#94A3B8;">'
-                f'<span leaf="">{html.escape(s)}</span></section>'
-            )
-        else:
-            rows.append(
-                f'<section style="margin:0;font-family:{mono};font-size:12.5px;line-height:1.65;color:#F8FAFC;word-break:break-all;">'
-                f'<span leaf="">{html.escape(raw)}</span></section>'
-            )
+        bdr = "border-top:1px solid #334155;padding-top:9px;margin-top:9px;" if rows else ""
+        rows.append(
+            f'<section style="{bdr}font-family:{mono};font-size:12.5px;line-height:1.65;color:#F8FAFC;word-break:break-all;">'
+            f'<span style="color:#F87171;font-weight:700;margin-right:8px;"><span leaf="">$</span></span>'
+            f'<span leaf="">{html.escape(raw)}</span></section>'
+        )
     return (
-        f'<section data-takeaway="1" style="margin:18px {_T["pad"]} 22px;border-radius:8px;overflow:hidden;'
-        f'background:#1E293B;border:1px solid #0F172A;">'
-        f'<section style="display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:#0F172A;">'
-        f'<section style="display:flex;align-items:center;">'
-        f'<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#FF5F56;margin-right:6px;"><span leaf=""><br></span></span>'
-        f'<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#FFBD2E;margin-right:6px;"><span leaf=""><br></span></span>'
-        f'<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#27C93F;"><span leaf=""><br></span></span>'
-        f'</section>'
-        f'<span style="font-size:10px;color:#94A3B8;font-family:{mono};"><span leaf="">TERMINAL</span></span>'
-        f'</section>'
-        f'<section style="padding:10px 14px;">{"".join(rows)}</section>'
+        f'<section data-takeaway="1" style="margin:20px {_T["pad"]} 24px;border-radius:8px;overflow:hidden;'
+        f'background:#1E293B;border:1px solid #0F172A;box-shadow:0 2px 10px rgba(0,0,0,0.04);">'
+        f'<section style="padding:14px 16px;">{"".join(rows)}</section>'
         f'</section>'
     )
 
@@ -781,17 +644,9 @@ def convert_markdown(lines: list[str], images: list[str] | None) -> str:
             source = source or legacy
             parts.append(image_html(source))
             placed.add(source)
-            if caption:
-                parts.append(f'<p style="{caption_style()}"><span leaf="">— {inline(caption)}</span></p>')
             continue
         if re.fullmatch(r"（[^）]{2,45}）|\([^)]{2,45}\)", line) and parts:
             if "<img " in parts[-1]:
-                cap_txt = line[1:-1].strip()
-                parts.append(f'<p style="{caption_style()}"><span leaf="">— {inline(cap_txt)}</span></p>')
-                continue
-            if len(parts) >= 2 and "<img " in parts[-2] and 'text-align:center' in parts[-1]:
-                cap_txt = line[1:-1].strip()
-                parts[-1] = f'<p style="{caption_style()}"><span leaf="">— {inline(cap_txt)}</span></p>'
                 continue
         if not line or line.startswith("- ["):
             flush_all()
