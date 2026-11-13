@@ -64,3 +64,24 @@
 2. **单次 `--limit` 压在 `10–15` 条以内**：严禁跑 `--limit 100` 或高频定时轮询，按需“写一篇拉一次”。
 3. **代理 IP 保持固定，不频繁切国家节点**：同一 Cookie 短时间跨区跳 IP 最容易触发异常登录风控弹窗。
 4. **手动刷推截图随时兜底**：平时手动刷 X 顺手截的图或录的 3 秒屏直接丢进 `assets/`，脚本无缝接管排版推箱。
+
+---
+
+## 六、汇芯精选高信号信源库（X + 海外博客 + 公众号 + AIHOT）
+
+> **采编铁律**：平时主要从 **X、海外博客与官方公告、中文公众号、AIHOT** 四路找选题；小红书**只补充用户发来的指定链接**，不做全站自动采集。现有清单登记了 **94 个 X 账号**，不每天全量扫，按当次选题定向拉取下面最相关的高信号子集。**所有账号只提供线索，绝不直接照搬——选中后必须回到原始官方发布、开源仓库或本机亲手实测，再转成自己的原创评测。**
+
+### 1. X（Twitter）核心高信号矩阵
+
+| 分类 | 核心账号清单（`@handle`） | 重点盯什么线索 |
+| :--- | :--- | :--- |
+| **中文 AI 实操与工具** | 宝玉 `@dotey`、歸藏 `@op7418`、向阳乔木 `@vista8`、花叔 `@AlchainHust`、Vincent `@Vincent_AINotes`、逸尘 `@gengdaJ`、meng shao `@shao__meng`、想风 `@xaiwind`、泊舟 `@bozhou_ai`、李继刚 `@lijigang` | 提示词模板、Claude Code / Codex / WorkBuddy / Skill / Agent 实操与工作流 |
+| **一人公司、创业与变现** | **中文**：Orange AI `@oran_ge`、刘小排 `@bourneliu66`、亦仁 `@yiren_ai`、余温 `@gkxspace`、哥飞 `@gefei55`、AYi `@AYi_AInotes`、智昊 `@cnzhihao`<br>**英文**：Pieter Levels `@levelsio`、Marc Lou `@marc_louvion`、Dan Koe `@thedankoe`、Daniel Vassallo `@dvassallo`、Greg Isenberg（博客信源） | 一人公司产品打法、独立开发变现案例、真实收入与流量冷启动 |
+| **海外一手方法与技术动向** | Ethan Mollick `@emollick`、Simon Willison `@simonw`、Andrej Karpathy `@karpathy`、Dan Shipper `@danshipper`、Swyx `@swyx`；产品与官方：`@AnthropicAI`、`@WorkBuddy_AI`、Sam Altman `@sama`、Tibo `@thsottiaux` | 一手工程评测方法论、新模型底层能力边界、官方产品路线与隐藏参数 |
+| **AI 视频、视觉与开源发现** | Berryxia `@berryxia`、李岳 `@liyue_ai`、知识猫AI实验室 `@GeekCatX`、岚叔 `@LufzzLiz`、余一 `@ameliax111`、GitHubDaily `@GitHub_Daily` | AI 视频/视觉工作流、高星开源项目、本地工具实测 Demo |
+
+### 2. 非 X 侧高频辅助信源
+
+- **中文头部公众号（个人 IP 风格与方法对标）**：数字生命卡兹克、宝玉、歸藏、量子位、机器之心、Founder Park、特工宇宙、张小珺等（只看选题与叙事切口，绝不洗稿）。
+- **海外一手博客与通讯**：各家 AI 实验室官方博客、Every、Lenny's Newsletter、One Useful Thing（Ethan Mollick）、Latent Space（Swyx）等。
+- **中文 AI 热点快报**：AIHOT 每日高热工具与开源榜单。
