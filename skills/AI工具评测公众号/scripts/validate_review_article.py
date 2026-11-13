@@ -230,14 +230,22 @@ def main() -> int:
     ap.add_argument("--max-paragraph", type=int, default=DEFAULT_MAX_PARAGRAPH)
     ap.add_argument("--min-images", type=int, default=None)
     ap.add_argument("--strict-warnings", action="store_true")
+    ap.add_argument("--skip-proof", action="store_true", help="跳过 00-real-run-proof.md 真跑回执检查")
     args = ap.parse_args()
 
     errors, warnings = validate_json(Path(args.article), args.max_paragraph, args.min_images)
     metrics = {}
     if args.md and Path(args.md).is_file():
-        md_err, md_warn, metrics = check_markdown_tone(Path(args.md))
+        md_path = Path(args.md)
+        md_err, md_warn, metrics = check_markdown_tone(md_path)
         errors.extend(md_err)
         warnings.extend(md_warn)
+        if not args.skip_proof:
+            proof_path = md_path.parent / "00-real-run-proof.md"
+            if not proof_path.is_file() or len(proof_path.read_text(encoding="utf-8").strip()) < 120:
+                errors.append(
+                    "真跑验货拦截：工程目录缺少完整的 00-real-run-proof.md 真跑回执（禁止无实测纯整理稿推草稿箱）"
+                )
 
     payload = {
         "ok": len(errors) == 0 and not (args.strict_warnings and warnings),
