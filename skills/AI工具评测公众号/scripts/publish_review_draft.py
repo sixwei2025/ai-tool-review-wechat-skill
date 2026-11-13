@@ -61,6 +61,17 @@ def main() -> int:
     if args.mode == "update" and not args.media_id:
         raise SystemExit("update 模式必须传入 --media-id")
     if not args.target:
+        env_file = Path.home() / ".config" / "wechat-autopilot" / "wechat.env"
+        if env_file.is_file():
+            for line in env_file.read_text(encoding="utf-8").splitlines():
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    k, v = line.split("=", 1)
+                    os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+            args.target = os.environ.get("WECHAT_SERVER_TARGET", "")
+            if args.key == str(Path.home() / ".ssh" / "opencław_wechat_publish") and os.environ.get("WECHAT_SSH_KEY"):
+                args.key = os.environ["WECHAT_SSH_KEY"]
+    if not args.target:
         raise SystemExit("未配置 WECHAT_SERVER_TARGET 环境变量（固定白名单 IP 服务器地址），请先在本地环境配置后再投递")
 
     remote_env = args.remote_env or ACCOUNT_ENVS[args.account]
@@ -91,15 +102,20 @@ def main() -> int:
     ssh = ["ssh", "-i", args.key, "-o", "BatchMode=yes", args.target]
     scp = ["scp", "-q", "-i", args.key, "-o", "BatchMode=yes"]
 
-    run(ssh + [f"mkdir -p {shlex.quote(remote_dir)}"])
+    run(ssh + [f"mkdir -p {shlex.quote(remote_dir)}/assets"])
     run(scp + [*(str(p) for p in (article, thumb, remote_script, remote_validator, *images)), f"{args.target}:{remote_dir}/"])
+    img_names_str = " ".join(shlex.quote(img.name) for img in images)
+    if images:
+        run(ssh + [f"cd {shlex.quote(remote_dir)} && cp {img_names_str} assets/"])
 
+    article_text = article.read_text(encoding="utf-8")
     cmd = ["python3", remote_script.name]
     if args.mode == "update":
         cmd += ["--media-id", args.media_id]
     cmd += ["--article", article.name, "--thumb", thumb.name, "--max-paragraph", str(args.max_paragraph), "--no-require-xiaohei"]
     for img in images:
-        cmd += ["--content-image", img.name]
+        ref = f"assets/{img.name}" if f"assets/{img.name}" in article_text else img.name
+        cmd += ["--content-image", ref]
 
     remote_cmd = (
         f"cd {shlex.quote(remote_dir)} && set -a && . {shlex.quote(remote_env)} && set +a && "
