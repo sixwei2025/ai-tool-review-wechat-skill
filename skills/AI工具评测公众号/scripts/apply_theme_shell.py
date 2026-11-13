@@ -269,7 +269,7 @@ def chapter_minimal(num: int, title: str, total: int) -> str:
     )
 
 
-def footer_block(theme: str, include_cta: bool = True) -> str:
+def footer_block(theme: str, include_cta: bool = True, ending_poster: str = "") -> str:
     end_line = (
         '<section style="margin:40px 20px 20px;text-align:center;">'
         '<section style="display:flex;align-items:center;justify-content:center;gap:12px;">'
@@ -278,17 +278,24 @@ def footer_block(theme: str, include_cta: bool = True) -> str:
         f'<span style="width:44px;height:1px;background:#D1D5DB;">{LEAF}<br></span></span>'
         '</section></section>'
     )
+    poster_html = ""
+    if ending_poster:
+        poster_html = (
+            '<section style="margin:12px 20px 24px;text-align:center;">'
+            f'<img src="{ending_poster}" style="width:100%;max-width:100%;display:block;border-radius:10px;border:1px solid #E5E7EB;" />'
+            '</section>'
+        )
     if not include_cta:
-        return end_line
+        return end_line + poster_html
     cta = (
-        '<section style="margin:0 20px 28px;padding:16px 18px;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;text-align:center;">'
+        '<section style="margin:0 20px 20px;padding:16px 18px;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;text-align:center;">'
         '<p style="margin:0;font-size:14px;color:#374151;line-height:1.75;">'
         f'{LEAF}如果你觉得今天这篇实测帮你省了时间，欢迎</span>'
         f'<strong style="color:#C8102E;font-weight:700;">{LEAF}点赞、在看、转发</span></strong>'
         f'{LEAF}三连，我们下篇硬核实测见。</span>'
         '</p></section>'
     )
-    return end_line + cta
+    return end_line + cta + poster_html
 
 
 def main() -> int:
@@ -312,6 +319,8 @@ def main() -> int:
     ap.add_argument("--stars", default="★★★★☆")
     ap.add_argument("--parts-short", default="", help="目录短标签（每格3-6字），用 | 分隔")
     ap.add_argument("--no-cta", action="store_true")
+    ap.add_argument("--ending-poster", default="assets/ending-poster-product.jpg", help="文末业务介绍海报路径")
+    ap.add_argument("--no-poster", action="store_true", help="显式关闭文末业务介绍海报")
     a = ap.parse_args()
 
     if a.strike.strip() in DEFAULT_FORBIDDEN_STRIKES:
@@ -366,7 +375,26 @@ def main() -> int:
     c = m.group(1) + shell + c[m.end() :]
 
     idx = c.rfind("</section>")
-    c = c[:idx] + footer_block(a.theme, include_cta=not a.no_cta) + c[idx:]
+    head = c[:idx]
+    tail = c[idx:]
+    # Strip any duplicate END / 三连 paragraphs written in markdown before injecting shell footer
+    head = re.sub(
+        r'(?:<hr[^>]*>\s*|<p[^>]*>\s*(?:<span[^>]*>)?\s*END\s*(?:</span>)?\s*</p>\s*|<p[^>]*>[^<]*(?:<[^>]+>[^<]*)*点赞、在看、转发.*?</p>\s*)+$',
+        "",
+        head,
+        flags=re.S,
+    )
+    poster_path = ""
+    if not a.no_poster and a.ending_poster:
+        p = Path(a.ending_poster)
+        if not p.exists():
+            builtin = Path(__file__).resolve().parent.parent / "assets" / "ending-poster-product.jpg"
+            if builtin.exists():
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_bytes(builtin.read_bytes())
+        if p.exists():
+            poster_path = a.ending_poster
+    c = head + footer_block(a.theme, include_cta=not a.no_cta, ending_poster=poster_path) + tail
     art["content"] = c
     Path(a.out).write_text(json.dumps(art, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps({
