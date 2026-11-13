@@ -1,6 +1,6 @@
 ---
 name: AI评测公众号
-version: "1.4.0"
+version: "1.2.6"
 description: >-
   AI 大模型、Agent Skill、MCP 插件、AI 编程工具与新功能的硬核真跑评测公众号全自动总控 Skill（2.0 重构版）。
   当用户说「评测雷达」「找评测选题」「实测XX模型/工具/Skill」「写篇XX评测/横评」「跑个评测」时立即使用。

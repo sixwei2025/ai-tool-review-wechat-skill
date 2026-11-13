@@ -1,9 +1,5 @@
 # 更新日志
 
-## v1.4.0 · 2026-11-13
-
-- **升级第 4 步封面渲染器（6 套极简编辑构图）**：同步 `wechat-cover-skill` V5（`editorial` / `monocle` / `tdc-grid` / `criterion` / `kinfolk` / `interview`），保持透明镂空人像零色块零框线的高级克制质感，支持 `--layout` 自由切换与 Headless Chrome 原生兜底。
-
 ## v1.2.6 · 2026-11-13
 
 - **新增《真跑验货回执》机械拦截校验**：升级 `scripts/validate_review_article.py`，推草稿箱前强制检查文章同目录下是否存在完整非空的 `00-real-run-proof.md`（记录真实命令、未裁剪原图与实测产物），彻底杜绝无实测纯整理稿件流出。
