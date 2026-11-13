@@ -80,6 +80,7 @@ author: 袁六伟 · 台州汇芯（公众号/视频号：袁六伟）
   - **官网核价**：查清官网最新月费/API 单价与免费额度，记录查询日期到 `templates/evidence-ledger.md`。
   - **X（Twitter）原帖与 Demo 抓图**：通过本机已登录 Chrome 会话截取 X 上的高赞实测推文、官方对比图，遇到大V发布的 Demo 视频直接切 3–5 秒高清 GIF 佐证。
   - **截图与 GIF 加工**：截取 8–12 张真实过程与结果图（裁噪音、打码隐私、套 `#C8102E` 红框高亮），并用 `ffmpeg` 制作 1–3 张流式速度对比或成片效果 GIF。
+  - **强制落盘《真跑验货回执》（`00-real-run-proof.md`）**：必须把本次真实执行的命令/软件窗口、未裁剪原始截图、真实产物路径与额度/耗时消耗写入工程根目录 `00-real-run-proof.md`，未落盘将被 `validate_review_article.py` 直接拦截禁止推箱。
 
 ### 第 3 步 · 撰写高密度评测正文（四幕/五幕结构：开篇释放结果 → 核心用法与方法 → 算账与选型 → 底层原理与人文延伸，不讲「踩了什么坑」）
 - **读**：`references/02-article-structures.md` + `references/04-tone-and-safety-gates.md`
