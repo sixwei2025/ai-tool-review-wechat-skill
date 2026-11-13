@@ -291,34 +291,35 @@ def build_html(brief: dict, theme_key: str, portrait_uri: str, psize=(817, 883))
     <span class="strip-tag">{b['ip_tag']}</span>
   </div>"""
 
-    # 2) masthead：大刊报头 + 人物头顶破框叠压刊头细线
+    # 2) masthead：大刊报头（满宽深墨黑刊头条 + 人物头顶破框叠压）
     elif layout == "masthead":
-        p_h = 980
+        p_h = 960
         p_w = round(p_h * pw_ratio)
         p_left = W - p_w - 40
-        p_top = 86  # 刻意低于顶部 136px 报头线以下一点，使头部轻微破框叠压报头线
-        titles = _titles_html(b["lines"], t["weight"], 136, 168)
+        p_top = 92
+        titles = _titles_html(b["lines"], t["weight"], 134, 166)
         css = _base_css(t, theme_key) + f"""
-.masthead{{position:absolute;left:{TEXT_X}px;right:{TEXT_X}px;top:52px;height:86px;
-  border-bottom:2px solid {t['ink']};display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:16px;z-index:1}}
-.mast-title{{font-family:{SERIF};font-size:44px;font-weight:700;letter-spacing:.18em;color:{t['ink']}}}
-.mast-title em{{font-style:normal;color:{t['accent']}}}
-.mast-meta{{font-family:{t['small_family']};font-size:23px;letter-spacing:.20em;color:{t['muted']};text-transform:uppercase}}
+.masthead{{position:absolute;left:0;right:0;top:0;height:112px;background:{t['ink']};
+  padding:0 {TEXT_X}px;display:flex;justify-content:space-between;align-items:center;z-index:1}}
+.mast-title{{font-family:{SERIF};font-size:40px;font-weight:700;letter-spacing:.18em;color:{t['paper']};
+  display:flex;align-items:center;gap:22px}}
+.mast-title .red-bar{{width:14px;height:42px;background:{t['accent']};display:inline-block}}
+.mast-meta{{font-family:{t['small_family']};font-size:22px;letter-spacing:.20em;color:rgba(241,239,234,.72);text-transform:uppercase}}
 .portrait{{position:absolute;left:{p_left}px;top:{p_top}px;width:{p_w}px;height:{p_h}px;
   object-fit:contain;object-position:bottom;filter:{SHADOW[theme_key]};z-index:2}}
-.txt{{position:absolute;left:{TEXT_X}px;top:210px;width:1160px;height:690px;z-index:3;
+.txt{{position:absolute;left:{TEXT_X}px;top:170px;width:1160px;height:710px;z-index:3;
   display:flex;flex-direction:column;justify-content:center}}
 .kicker{{margin-bottom:26px}}
-.brand{{font-size:88px;margin-bottom:16px}}
-.rule{{width:160px;height:4px;background:{t['accent']};margin:34px 0 24px}}
-.bottom-bar{{position:absolute;left:{TEXT_X}px;bottom:46px;width:1120px;border-top:1px solid {t['hair']};
+.brand{{font-size:86px;margin-bottom:16px}}
+.rule{{width:160px;height:4px;background:{t['accent']};margin:32px 0 22px}}
+.bottom-bar{{position:absolute;left:{TEXT_X}px;bottom:42px;width:1120px;border-top:1px solid {t['hair']};
   padding-top:16px;display:flex;justify-content:space-between;align-items:center;z-index:3;
   font-family:{SANS};font-size:23px;letter-spacing:.12em;color:{t['muted']}}}
 .bottom-bar strong{{color:{t['ink']};font-weight:600}}
 """
         body = f"""
   <div class="masthead">
-    <div class="mast-title">HUIXIN <em>·</em> {b['author']}</div>
+    <div class="mast-title"><i class="red-bar"></i><span>HUIXIN JOURNAL · {b['author']}</span></div>
     <div class="mast-meta">{b['ip_tag']}</div>
   </div>
   <img class="portrait" src="{portrait_uri}">
@@ -331,28 +332,30 @@ def build_html(brief: dict, theme_key: str, portrait_uri: str, psize=(817, 883))
   </div>
   <div class="bottom-bar"><span><strong>COLUMN</strong> · {b['kicker']}</span><span>{b['author']}</span></div>"""
 
-    # 3) archive-card：左侧大留白 + 右侧 1px 细框人物档案卡片 + IP 签名底栏
+    # 3) archive-card：左侧高亮反白结论 + 右侧微倾档案相框卡片
     elif layout == "archive-card":
         card_bg = t.get("card_bg", "#FFFFFF")
         p_h = 770
         p_w = round(p_h * pw_ratio)
-        titles = _titles_html(b["lines"], t["weight"], 138, 170)
+        titles = _titles_html(b["lines"], t["weight"], 134, 152)
         css = _base_css(t, theme_key) + f"""
 .txt{{position:absolute;left:{TEXT_X}px;top:0;width:1140px;height:{H}px;
   display:flex;flex-direction:column;justify-content:center}}
-.kicker{{margin-bottom:32px}}
-.brand{{font-size:92px;margin-bottom:16px}}
-.rule{{width:340px;height:2px;background:{t['accent']};margin:34px 0 24px}}
-.sub{{margin-bottom:44px}}
-.frame{{position:absolute;right:96px;top:62px;width:780px;height:876px;background:{card_bg};
-  border:2px solid {t['ink']};box-shadow:18px 18px 0 {t['accent']};overflow:hidden}}
+.kicker{{margin-bottom:28px}}
+.brand{{font-size:88px;margin-bottom:14px}}
+.tl.accent span{{display:inline-block;background:{t['accent']};color:{t['accent_on']};
+  padding:8px 26px 12px;margin-top:10px}}
+.rule{{width:340px;height:2px;background:{t['accent']};margin:34px 0 22px}}
+.sub{{margin-bottom:40px}}
+.frame{{position:absolute;right:104px;top:66px;width:760px;height:868px;background:{card_bg};
+  border:2.5px solid {t['ink']};box-shadow:22px 22px 0 {t['accent']};transform:rotate(-1.2deg);overflow:hidden}}
 .frame-top{{height:58px;border-bottom:1px solid {t['hair']};padding:0 28px;
   display:flex;justify-content:space-between;align-items:center;
   font-family:{t['small_family']};font-size:20px;font-weight:600;letter-spacing:.18em;color:{t['muted']}}}
-.frame-body{{position:relative;height:706px;overflow:hidden;background:{t['paper2']}}}
+.frame-body{{position:relative;height:698px;overflow:hidden;background:{t['paper2']}}}
 .portrait{{position:absolute;left:50%;transform:translateX(-50%);top:24px;width:{p_w}px;height:{p_h}px;
   object-fit:contain;object-position:bottom;filter:{SHADOW[theme_key]}}}
-.frame-foot{{height:110px;border-top:1.5px solid {t['ink']};padding:0 28px;background:{card_bg};
+.frame-foot{{height:110px;border-top:2px solid {t['ink']};padding:0 28px;background:{card_bg};
   display:flex;justify-content:space-between;align-items:center}}
 .frame-name{{font-family:{SERIF};font-size:32px;font-weight:700;color:{t['ink']};letter-spacing:.06em}}
 .frame-role{{font-family:{SANS};font-size:22px;color:{t['accent']};font-weight:600;letter-spacing:.08em}}
@@ -438,6 +441,8 @@ def build_html(brief: dict, theme_key: str, portrait_uri: str, psize=(817, 883))
   display:flex;flex-direction:column;justify-content:center}}
 .kicker{{margin-bottom:28px}}
 .brand{{font-size:90px;margin-bottom:16px}}
+.tl.accent span{{display:inline-block;background:{t['accent']};color:{t['accent_on']};
+  padding:8px 28px 12px;margin-top:8px;border-radius:12px}}
 .rule{{width:380px;height:3px;background:{t['accent']};margin:34px 0 24px}}
 .strip{{position:absolute;left:{TEXT_X}px;bottom:48px;width:1160px;display:flex;justify-content:space-between;align-items:center}}
 .strip-note{{font-family:{SANS};font-size:23px;color:{t['muted']};letter-spacing:.10em}}
@@ -460,13 +465,14 @@ def build_html(brief: dict, theme_key: str, portrait_uri: str, psize=(817, 883))
     <span class="strip-note">{b['ip_tag']}</span>
   </div>"""
 
-    # 6) cinema：电影宽银幕 + 暗底聚光 + 底部主创铭牌
+    # 6) cinema：电影宽银幕 + 暗底聚光 + 上下电影细金框 + 底部主创铭牌
     else:
         p_h = 1010
         p_w = round(p_h * pw_ratio)
         p_left = W - p_w - 20
         titles = _titles_html(b["lines"], t["weight"], 144, 178)
         css = _base_css(t, theme_key) + f"""
+.letterbox-top{{position:absolute;left:{TEXT_X}px;right:{TEXT_X}px;top:44px;height:1px;background:{t['hair']}}}
 .spot{{position:absolute;right:140px;top:120px;width:820px;height:820px;border-radius:50%;
   background:radial-gradient(circle, rgba(212,160,74,.20) 0%, transparent 66%);pointer-events:none}}
 .portrait{{position:absolute;left:{p_left}px;top:64px;width:{p_w}px;height:{p_h}px;
@@ -485,6 +491,7 @@ def build_html(brief: dict, theme_key: str, portrait_uri: str, psize=(817, 883))
 .credits strong{{color:{t['accent']};font-weight:600}}
 """
         body = f"""
+  <div class="letterbox-top"></div>
   <div class="spot"></div>
   <img class="portrait" src="{portrait_uri}">
   <div class="tint"></div>

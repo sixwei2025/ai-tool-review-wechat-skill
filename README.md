@@ -115,7 +115,7 @@ https://github.com/sixwei2025/ai-tool-review-wechat-skill
 彻底告别廉价培训班海报式的粗金描边字与杂乱网页底图，内置与自动化公众号完全同源的 `render_cover_themes.py`（Playwright + Chrome 渲染，自动检测 `1334px` 1:1 裁切安全线与防压脸检查）：
 
 <p align="center">
-  <img src="assets/showcase/00-cover-six.jpg" alt="六套高客单价杂志风封面总览" width="100%" />
+  <img src="assets/showcase/00-cover-layouts-v3.jpg" alt="六套高客单价杂志风封面总览" width="100%" />
 </p>
 
 | 封面主题 ID | 中文名 | 默认构图版式（`--layout`） | 最佳评测场景 |
