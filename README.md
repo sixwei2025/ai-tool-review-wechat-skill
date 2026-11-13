@@ -115,17 +115,17 @@ https://github.com/sixwei2025/ai-tool-review-wechat-skill
 彻底告别廉价培训班海报式的粗金描边字与杂乱网页底图，内置与自动化公众号完全同源的 `render_cover_themes.py`（Playwright + Chrome 渲染，自动检测 `1334px` 1:1 裁切安全线与防压脸检查）：
 
 <p align="center">
-  <img src="assets/showcase/00-cover-layouts-v3.jpg" alt="六套高客单价杂志风封面总览" width="100%" />
+  <img src="assets/showcase/00-cover-layouts-v4.jpg" alt="六种空间构图封面总览：经典双栏、左人右文、Bento拼贴、居中C位、档案卡黑底、斜切海报" width="100%" />
 </p>
 
-| 封面主题 ID | 中文名 | 默认构图版式（`--layout`） | 最佳评测场景 |
+| 封面主题 ID | 中文名 | 空间构图版式（`--layout`） | 最佳评测场景 |
 | :--- | :--- | :--- | :--- |
-| **`brand`** | **汇芯红** | `editorial`（经典杂志双栏 + IP 印章） | 通用主力，米白纸感底 + 汇芯红点睛，与正文排版一脉相承 |
-| **`indigo`** | **靛蓝瓷** | `duotone-split`（60/40 硬切双色对撞） | AI 模型/工具深度实测、技术拆解、产品更新 |
-| **`swiss`** | **瑞士蓝** | `swiss-grid`（`1px` 细线网格 + 半身特写） | 多模型同题横评、榜单盘点、纯数据对比 |
-| **`midnight`** | **午夜墨** | `cinema`（电影宽银幕 + 主创铭牌） | 带硬数字的算账复盘、ROI 对比、深度长文 |
-| **`paper`** | **纸本墨** | `masthead`（大刊报头 + 人物破框叠压） | Agent Skill 实操教程、方法论、配置清单 |
-| **`kraft`** | **牛皮纸** | `archive-card`（档案相框卡片 + IP 签名条） | 踩坑复盘、避坑实录 |
+| **`brand`** | **汇芯红** | `editorial-right`（经典左文右人 + IP 印章） | 通用主力，米白纸感底 + 汇芯红点睛，与正文排版一脉相承 |
+| **`paper`** | **纸本墨** | `portrait-left`（左人右文反转 + 顶通黑条报头） | Agent Skill 实操教程、方法论、配置清单 |
+| **`swiss`** | **瑞士蓝** | `bento-grid`（Bento 三格圆角卡片拼贴） | 多模型同题横评、榜单盘点、纯数据对比 |
+| **`midnight`** | **午夜墨** | `center-hero`（人物正中 C 位 + 左右分列） | 带硬数字的算账复盘、ROI 对比、深度长文 |
+| **`kraft`** | **牛皮纸** | `card-black-split`（左米白档案卡 + 右纯黑大字） | 踩坑复盘、避坑实录 |
+| **`indigo`** | **靛蓝瓷** | `diagonal-cut`（11° 斜切双色海报） | AI 模型/工具深度实测、技术拆解、产品更新 |
 
 ### 5.2 正文排版：汇芯红六套手机骨架（按题材直选）
 
