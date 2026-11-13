@@ -134,6 +134,18 @@ def validate_json(article_path: Path, max_paragraph: int, min_images: int | None
         content,
         flags=re.S,
     )
+    masked = re.sub(
+        r'(<section data-takeaway="1"[^>]*>).*?(</section>\s*</section>)',
+        r"\1\2",
+        masked,
+        flags=re.S,
+    )
+    masked = re.sub(
+        r"(<table\b[^>]*>).*?(</table>)",
+        r"\1\2",
+        masked,
+        flags=re.S | re.I,
+    )
     _FORBIDDEN = [
         (re.compile(r"</?div[\s>]", re.I), "禁止使用 <div>，请统一使用 <section>"),
         (re.compile(r"\sclass\s*=", re.I), "存在 class 属性（微信后台会剥离，必须全内联 style）"),
@@ -171,10 +183,16 @@ def validate_json(article_path: Path, max_paragraph: int, min_images: int | None
         errors.append("未装配主题专属外壳：请先运行 scripts/apply_theme_shell.py")
 
     pre_blocks = re.findall(r'<section style="[^"]*white-space:pre-wrap[^"]*">(.*?)</section>', content, flags=re.S)
+    takeaway_cards = re.findall(r'<section data-takeaway="1"', content, flags=re.I)
     tables = re.findall(r"<table\b", content, flags=re.I)
-    takeaways = len(pre_blocks) + len(tables)
+    takeaways = len(pre_blocks) + len(takeaway_cards) + len(tables)
     if len(text) >= 1200 and takeaways < 2:
-        errors.append(f"高价值原件硬闸：评测文至少需 2 个可复制代码块或横评数据表（当前仅 {takeaways} 个）")
+        errors.append(f"高价值原件硬闸：评测文至少需 2 个可复制代码块、精简速查卡或横评数据表（当前仅 {takeaways} 个）")
+
+    # 臃肿原件硬闸：单块 white-space:pre-wrap 禁止超过 320 字，防止大段灰墙折行
+    bloated_pre = [len(strip_tags(b).strip()) for b in pre_blocks if len(strip_tags(b).strip()) > 320]
+    if bloated_pre:
+        errors.append(f"原件排版臃肿硬闸：发现 {len(bloated_pre)} 个超长 pre-wrap 灰框（{bloated_pre[0]} 字 > 320 字上限），请精简为 ≤5 行核心口令或改用结构化卡片/表格")
 
     imgs = image_sources(content)
     missing = [src for src in imgs if not local_image_exists(article_path, src)]
