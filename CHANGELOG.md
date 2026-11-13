@@ -1,5 +1,14 @@
 # 更新日志
 
+## v1.1.0 · 2026-11-13
+
+- **头部 20 家 AI 评测公众号拆解矩阵**：扩充 `01-benchmark-and-matrix.md` 为四大流派 20 家头部账号对标体系。
+- **评测写作七大原则**：确立「一手心得细节 / 必须带对比 / 具体言之有物 / 动图与海外截图强可视化 / 结论先行 / 10 秒听懂人话类比 / 必留可抄原件」。
+- **吸收 `khazix-writer` 活人感写作技法**：新增 `references/05-human-writing-craft.md`（保留原作者 `KKKKhazix/khazix-skills` 致谢），融入 HKR 质检、人机边界、升番逻辑与契诃夫之枪。
+- **全量黑话与 AI 暴露词自动拦截**：升级 `validate_review_article.py`，自动拦截大厂黑话、AI 口头禅、`khazix-writer` 高危 AI 暴露词及内部机械词。
+- **尾件防重与业务海报自动挂载**：修复 `apply_theme_shell.py` 重复三连问题，2 号（`hao2`）与主号（`main`）统一挂载无二维码《袁六伟 · 一人AI公司》业务海报；修复 `publish_review_draft.py` 自动加载环境变量与 `assets/` 路径兼容。
+- **兼容说明**：保持原有 CLI 调用参数与目录结构 100% 向后兼容。
+
 ## v1.0.0 · 2026-11-13
 
 - 建立可追踪的版本记录，README、Skill 文件和 Git 标签保持一致。
