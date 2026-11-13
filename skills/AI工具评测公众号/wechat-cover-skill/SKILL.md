@@ -2,6 +2,7 @@
 name: wechat-cover-skill
 description: >-
   为袁六伟/汇芯红公众号生成黑红金封面（左文右人、右侧真人抠像、2350×1000 母版导出 900×383 与 1:1 方图）时使用。HTML + headless Chrome 渲染；硬闸含真人 IP 露出与对外口径文案。触发词：做封面、公众号封面、封面、黑红金封面、封面brief。
+version: 1.0.0
 author: 袁六伟 · 台州汇芯（公众号/视频号：袁六伟）
 ---
 
