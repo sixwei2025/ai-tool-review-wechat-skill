@@ -25,6 +25,11 @@ DEFAULT_MAX_PARAGRAPH = 80
 
 JUDGE_WORDS = ("判决", "宣判", "裁定", "裁决", "本案", "落槌", "铁证如山")
 BANNED_HYPE = ("颠覆行业", "遥遥领先", "史无前例", "宇宙第一", "吊打一切", "100%准确", "包过", "必赚")
+BANNED_JARGON = (
+    "赋能", "抓手", "闭环", "底层逻辑", "顶层设计", "颗粒度", "生态位", "降本增效", "组合拳", "全链路",
+    "不得不说", "值得一提的是", "总而言之", "综上所述", "各有千秋", "见仁见智",
+    "硬闸", "门闸", "机械硬闸",
+)
 
 
 def strip_tags(html: str) -> str:
@@ -83,10 +88,13 @@ def check_markdown_tone(md_path: Path) -> tuple[list[str], list[str], dict]:
     if judge_hits:
         errors.append(f"说人话硬闸：命中禁用「法官腔」词汇：{', '.join(judge_hits)}")
 
-    # 3. 喊麦/绝对化违禁词
+    # 3. 喊麦/绝对化违禁词 + 大厂黑话/AI口头禅/机械黑话
     hype_hits = [w for w in BANNED_HYPE if w in no_code]
     if hype_hits:
-        errors.append(f"合规硬闸：命中夸张/绝对化禁用词：{', '.join(hype_hits)}")
+        errors.append(f"合规校验：命中夸张/绝对化禁用词：{', '.join(hype_hits)}")
+    jargon_hits = [w for w in BANNED_JARGON if w in no_code]
+    if jargon_hits:
+        errors.append(f"说人话校验：命中大厂黑话/AI口头禅/内部机械词：{', '.join(jargon_hits)}")
 
     # 4. 翻案腔（不是A而是B）
     flips = [
