@@ -1,5 +1,10 @@
 # 更新日志
 
+## v1.2.1 · 2026-11-13
+
+- **新增 X（Twitter）一键抓取脚本**：新增 `scripts/fetch_x_evidence.py`（基于开源 `vladkens/twscrape`，MIT 许可），支持通过浏览器 Cookie 免官方 API Key 搜索 X 高赞推文、下载高清原图，并将推文中的 Demo 视频自动切片为 `≤3MB` 高清 GIF。
+- **文档更新**：同步更新 `references/06-twitter-x-sourcing.md` 与 `SKILL.md`。
+
 ## v1.2.0 · 2026-11-13
 
 - **X（Twitter）一手评测水源正式接入工作流**：新增 `references/06-twitter-x-sourcing.md`，内置四类必盯海外与中文 AI 大V信源清单、X 高效检索语法与原帖截图 / Demo 视频转 GIF 规范。

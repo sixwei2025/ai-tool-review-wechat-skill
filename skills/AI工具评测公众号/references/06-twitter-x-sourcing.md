@@ -40,3 +40,17 @@
 2. **遇到 Demo 视频直接切 GIF**：看到大V发的一手生成视频或操作录屏，保存或录屏 3–5 秒高光片段，用 `ffmpeg` 压成 `≤3MB` 的高清 GIF 插进正文，说服力远超静态图。
 3. **裁掉浏览器噪音、保留作者 `@handle`**：截取推文卡片时，裁掉左侧边栏和右侧热搜推荐，保留发帖人头像、`@handle`、时间戳和核心文字/图表。
 4. **严格区分「自己测的」和「X 平台引用」**：自己没跑过的测试不能冒充亲测；引用 X 素材时必须写明来源（例如「海外 X 平台上 Box CEO Aaron Levie 晒出的实测数据显示……」），真诚第一。
+
+## 四、一键自动化抓取脚本（`scripts/fetch_x_evidence.py`，基于 `vladkens/twscrape`）
+
+本 Skill 已内置 `scripts/fetch_x_evidence.py`（依赖本机已预装的 `/opt/homebrew/bin/twscrape` 与 `ffmpeg`），免买官方高价 API Key，可直接拉取 X 推文正文、配图并把 Demo 视频自动切为 `≤3MB` 微信高清 GIF：
+
+```bash
+# 首次使用：从已登录 x.com 的 Chrome 复制 auth_token 与 ct0 绑定
+/opt/homebrew/bin/python3.11 skills/AI工具评测公众号/scripts/fetch_x_evidence.py \
+  --add-cookie "my_x" "auth_token=xxx; ct0=yyy"
+
+# 日常抓图 + Demo 视频自动转 GIF
+/opt/homebrew/bin/python3.11 skills/AI工具评测公众号/scripts/fetch_x_evidence.py \
+  --query '"Gemini 4 Hydrogen" min_faves:20' --limit 15 --gif --out ./assets/x
+```
