@@ -1,6 +1,6 @@
 ---
 name: AI评测公众号
-version: "1.2.6"
+version: "1.5.0"
 description: >-
   AI 大模型、Agent Skill、MCP 插件、AI 编程工具与新功能的硬核真跑评测公众号全自动总控 Skill（2.0 重构版）。
   当用户说「评测雷达」「找评测选题」「实测XX模型/工具/Skill」「写篇XX评测/横评」「跑个评测」时立即使用。
@@ -66,25 +66,27 @@ author: 袁六伟 · 台州汇芯（公众号/视频号：袁六伟）
 详细规范按需读取 `references/01~04`，不靠人工填表卡流程，全靠脚本硬闸把关：
 
 ### 第 1 步 · 三水源评测雷达与选题卡
-- **读**：`references/01-benchmark-and-matrix.md` + `references/06-twitter-x-sourcing.md`
+- **读**：`references/01-benchmark-and-matrix.md` + `references/06-twitter-x-sourcing.md`（若为商单合作，加读 `references/07-sponsorship-and-ops.md`）
 - **动作**：
   1. 扫内部真问题水源（`zsxq-cli` 社群高频卡点与选型提问）；
   2. 扫外部首发热点（`aihot` 24h 资讯 + GitHub/MCP 热门 Skill + 海外一手基准）；
-  3. **扫 X（Twitter）一手实测与热帖水源**：按 `references/06-twitter-x-sourcing.md` 检索官方 Thread、高赞 Demo 视频与一线大V真实评价。
-- **产出**：按 `templates/topic-and-plan-card.md` 给出 **3 个差异化实测方向 + Top1 推荐 + 6 个标题候选（数字 + 反差结果 + 可拿走物/流量词）**。
+  3. **扫 X（Twitter）一手实测与热帖水源**：按 `references/06-twitter-x-sourcing.md` 检索官方 Thread、高赞 Demo 视频与一线大V真实评价；
+  4. **严分「选题 vs 标题」并过选题四问**：先按 `templates/topic-and-plan-card.md` 写清一句话选题公式，答清「具体使用者 / 可见交付结果 / 工期可行性 / 独家判断或经验」四问，**四问不清不许进入写稿**；商单须将品牌功能清单翻译为读者真实任务，严禁直接照搬作目录。
+- **产出**：按 `templates/topic-and-plan-card.md` 给出 **一句话选题 + 3 个差异化实测方向 + Top1 推荐 + 6 个标题候选（数字 + 反差结果 + 可拿走物/流量词）**。
 
-### 第 2 步 · 本机沙盒真跑压测 + X（Twitter）取证
+### 第 2 步 · 本机沙盒真跑压测 + 前置检查点 + X（Twitter）取证
 - **读**：`references/01-benchmark-and-matrix.md` + `references/03-visual-and-media-policy.md` + `references/06-twitter-x-sourcing.md`
 - **动作**：
-  - 按四大评测赛道（基座模型 / Agent Skill & MCP / 多模态 / AI IDE）挑 3–4 个真实业务任务，在本机终端、API 或浏览器真跑。
-  - **官网核价**：查清官网最新月费/API 单价与免费额度，记录查询日期到 `templates/evidence-ledger.md`。
+  - **动手前先列检查点（Verify Before Run）**：按 `templates/evidence-ledger.md` 先写 3–4 个核验点（如状态保存、分母合理性、数据联动、视频人物与口型一致性），不看见界面好看就默认功能有效。
+  - 按四大评测赛道（基座模型 / Agent Skill & MCP / 多模态 / AI IDE）挑 3–4 个真实业务任务，在本机终端、API 或浏览器真跑，并记录**「预期结果 → 首轮实际 → 补救要求 → 复查结论」**四步过程。
+  - **官网核价与模拟数据声明**：查清官网最新月费/API 单价与免费额度，记录查询日期；使用教学/模拟数据时必须明确标出。
   - **X（Twitter）原帖与 Demo 抓图**：通过本机已登录 Chrome 会话截取 X 上的高赞实测推文、官方对比图，遇到大V发布的 Demo 视频直接切 3–5 秒高清 GIF 佐证。
   - **截图与 GIF 加工**：截取 8–12 张真实过程与结果图（裁噪音、打码隐私、套 `#C8102E` 红框高亮），并用 `ffmpeg` 制作 1–3 张流式速度对比或成片效果 GIF。
-  - **强制落盘《真跑验货回执》（`00-real-run-proof.md`）**：必须把本次真实执行的命令/软件窗口、未裁剪原始截图、真实产物路径与额度/耗时消耗写入工程根目录 `00-real-run-proof.md`，未落盘将被 `validate_review_article.py` 直接拦截禁止推箱。
+  - **强制落盘《真跑验货回执》（`00-real-run-proof.md`）+ 作者口述体感**：必须把本次真实执行的命令/软件窗口、未裁剪原始截图、真实产物路径、额度/耗时消耗，以及作者口述的真实体感（最烦的一步、超预期点、不可用边界）写入工程根目录 `00-real-run-proof.md`，未落盘将被 `validate_review_article.py` 直接拦截禁止推箱。
 
 ### 第 3 步 · 撰写高密度评测正文（四幕/五幕结构：开篇释放结果 → 核心用法与方法 → 算账与选型 → 底层原理与人文延伸，不讲「踩了什么坑」）
-- **读**：`references/02-article-structures.md` + `references/04-tone-and-safety-gates.md`
-- **动作**：按题材选用实战模板写出 `03-review.md`（**2026-11-13 袁总定调：所有评测文章不再写「踩了什么坑 / 避坑指南 / 翻车报错」，统一按「开篇释放惊艳结果 → 手把手告诉方法与可抄原件 → 算账与选型路由 → 结尾稍微延伸讲一下底层原理与人文思考」推进**）：
+- **读**：`references/02-article-structures.md` + `references/04-tone-and-safety-gates.md`（商单或复盘加读 `references/07-sponsorship-and-ops.md`）
+- **动作**：按题材选用实战模板写出 `03-review.md`（**严禁让 AI 补写未做过的操作或编造结果/对话**；案例组织坚持**「一个完整连续任务/故事 > 五个同质例子换五个名字」**；自检按**选题层 → 材料层 → 表达层**三层排错）：
   1. **开篇立靶与释放结果（前 2 段）**：用真实业务痛点或高光成果切入，**钩子后 1–2 段内必上首张 GIF 或结果大图**，第一时间把跑通后的惊艳结果释放给读者。
   2. **核心用法与方法拆解（原件块 ①）**：手把手交代怎么用、怎么配，贴出可直接复制的 **完整测试 Prompt / 安装配置代码围栏**。
   3. **真实场景实证与效率对比**：用真图、耗时/成本具体数字展示工具在不同业务场景下的高光表现与效率跃迁。
@@ -168,11 +170,14 @@ author: 袁六伟 · 台州汇芯（公众号/视频号：袁六伟）
 ```text
 skills/AI工具评测公众号/
 ├── SKILL.md                                  # 【总控入口】六步全自动流水线与硬指标
-├── references/                               # 【4 份高密度核心规范（替代旧版 23 份碎片文档）】
+├── references/                               # 【核心规范与商单经营体系】
 │   ├── 01-benchmark-and-matrix.md            # 对标矩阵、双水源雷达与四大评测赛道压测题库
 │   ├── 02-article-structures.md              # 五个一票否决、四大实战模板、标题公式与尾件分流
 │   ├── 03-visual-and-media-policy.md         # 实操截图卡七要素、ffmpeg 高清 GIF 与黑红金封面
-│   └── 04-tone-and-safety-gates.md           # 反电报碎句、说人话禁词表、内外表达分界与类比库
+│   ├── 04-tone-and-safety-gates.md           # 反电报碎句、说人话禁词表、内外表达分界与类比库
+│   ├── 05-human-writing-craft.md             # 活人感写作技法与独树一帜文风规范
+│   ├── 06-twitter-x-sourcing.md              # X/Twitter 一手评测水源与取证规范
+│   └── 07-sponsorship-and-ops.md             # 商单 Brief 翻译、10 项确认清单、三层排错与 ROI 算账
 ├── scripts/                                  # 【全自动转换、装配、校验与推箱脚本】
 │   ├── markdown_to_wechat_article.py         # Markdown → 汇芯红六套骨架 JSON（支持表格/代码块）
 │   ├── apply_theme_shell.py                  # 全六套主题专属开篇封面/目录/章节头/END 注入器
