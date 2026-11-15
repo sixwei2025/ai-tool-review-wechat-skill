@@ -8,19 +8,41 @@ import argparse, os, re, shutil, subprocess, tempfile
 from pathlib import Path
 
 def chrome_bin() -> str:
-    for c in [os.environ.get("CHROME_BIN"), "google-chrome", "chromium", "chromium-browser",
-              "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"]:
+    pf = os.environ.get("ProgramFiles", r"C:\Program Files")
+    pf86 = os.environ.get("ProgramFiles(x86)", r"C:\Program Files (x86)")
+    lad = os.environ.get("LOCALAPPDATA", "")
+    cands = [
+        os.environ.get("CHROME_BIN"),
+        "google-chrome", "chrome", "chromium", "chromium-browser", "msedge",
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+        os.path.join(pf, "Google", "Chrome", "Application", "chrome.exe"),
+        os.path.join(pf86, "Google", "Chrome", "Application", "chrome.exe"),
+        os.path.join(lad, "Google", "Chrome", "Application", "chrome.exe") if lad else "",
+        os.path.join(pf, "Microsoft", "Edge", "Application", "msedge.exe"),
+    ]
+    for c in cands:
         if c and (shutil.which(c) or Path(c).exists()):
             return shutil.which(c) or c
-    raise SystemExit("找不到 Chrome，设置 CHROME_BIN")
+    raise SystemExit("找不到 Chrome/Edge，请设置 CHROME_BIN")
+
+def _find_playwright_mjs() -> str:
+    for c in [
+        os.environ.get("PLAYWRIGHT_MJS"),
+        str(Path.home() / ".workbuddy/skills/聊天记录说唱视频/node_modules/playwright/index.mjs"),
+        str(Path.cwd() / "node_modules/playwright/index.mjs"),
+    ]:
+        if c and Path(c).exists():
+            return c
+    return ""
 
 BASE = ["--headless=new", "--no-sandbox", "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=1"]
 
 def dump_dom(html_path: Path, width: int, height: int = 1000, budget_ms: int = 3000) -> str:
-    pw_mod = "/Users/yuanliuwei/.workbuddy/skills/聊天记录说唱视频/node_modules/playwright/index.mjs"
-    if Path(pw_mod).exists():
+    pw_mod = _find_playwright_mjs()
+    if pw_mod and Path(pw_mod).exists():
         js = f"""
-        import {{ chromium }} from '{pw_mod}';
+        import {{ chromium }} from {repr(Path(pw_mod).resolve().as_uri())};
         const b = await chromium.launch({{ channel: 'chrome' }});
         const pg = await b.newPage({{ viewport: {{ width: {width}, height: {height} }}, deviceScaleFactor: 1 }});
         await pg.goto({repr(html_path.resolve().as_uri())}, {{ waitUntil: 'load' }});
@@ -50,10 +72,10 @@ def measure_height(html_path: Path, width: int) -> int:
 
 def screenshot(html_path: Path, out: Path, width: int, height: int | None = None) -> Path:
     h = height or measure_height(html_path, width)
-    pw_mod = "/Users/yuanliuwei/.workbuddy/skills/聊天记录说唱视频/node_modules/playwright/index.mjs"
-    if Path(pw_mod).exists():
+    pw_mod = _find_playwright_mjs()
+    if pw_mod and Path(pw_mod).exists():
         js = f"""
-        import {{ chromium }} from '{pw_mod}';
+        import {{ chromium }} from {repr(Path(pw_mod).resolve().as_uri())};
         const b = await chromium.launch({{ channel: 'chrome' }});
         const pg = await b.newPage({{ viewport: {{ width: {width}, height: {h} }}, deviceScaleFactor: 1 }});
         await pg.goto({repr(html_path.resolve().as_uri())}, {{ waitUntil: 'load' }});

@@ -1,5 +1,9 @@
 # 更新日志
 
+## v1.5.1 · 2026-11-15
+
+- `fetch_x_evidence.py` 与 `chrome_shot.py` 增加 Windows Chrome / Edge 自动路径探测与 Playwright 跨平台 `file://` URI 兼容。
+
 ## v1.5.0 · 2026-11-15
 
 - **新增公众号商单与经营复盘体系（`references/07-sponsorship-and-ops.md`）**：融合吸收自西堂（`@xitang_ai` / 西羊石 AI 视频）公开分享的 AI 公众号商单与实测方法论，补齐「品牌三层价值」「品牌 Brief 翻译铁律（完整任务剧情化 > 同质五连发）」「商单沟通 10 项确认清单」「三层自检排错法（选题层→材料层→表达层）」及「三账分离与单篇 ROI 算账公式」。

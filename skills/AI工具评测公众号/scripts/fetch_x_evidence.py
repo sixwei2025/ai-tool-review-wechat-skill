@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/python3.11
+#!/usr/bin/env python3
 from __future__ import annotations
 """
 X（Twitter）一手评测素材与 Demo 动图抓取脚本（基于开源 vladkens/twscrape, MIT）
@@ -9,10 +9,10 @@ X（Twitter）一手评测素材与 Demo 动图抓取脚本（基于开源 vladk
 3. 输出结构化 x_evidence.json 台账（含原帖 URL、作者 @handle、点赞数、正文与本地素材路径）。
 
 首次绑定 X Cookie 示例（从已登录 x.com 的浏览器复制 auth_token 与 ct0）：
-  /opt/homebrew/bin/python3.11 fetch_x_evidence.py --add-cookie "my_x_acc" "auth_token=xxx; ct0=yyy"
+  python3 fetch_x_evidence.py --add-cookie "my_x_acc" "auth_token=xxx; ct0=yyy"
 
 日常抓取示例：
-  /opt/homebrew/bin/python3.11 fetch_x_evidence.py --query '"Gemini 4 Hydrogen" min_faves:20' --limit 15 --out ./assets/x
+  python3 fetch_x_evidence.py --query '"Gemini 4 Hydrogen" min_faves:20' --limit 15 --out ./assets/x
 """
 import argparse
 import asyncio
@@ -88,7 +88,7 @@ async def run_search(args: argparse.Namespace) -> int:
         print(json.dumps({
             "ok": False,
             "error": "twscrape 账号池为空或未激活",
-            "how_to_fix": '请从已登录 x.com 的 Chrome 开发者工具复制 auth_token 与 ct0，执行：/opt/homebrew/bin/python3.11 fetch_x_evidence.py --add-cookie "my_x" "auth_token=xxx; ct0=yyy"',
+            "how_to_fix": '请从已登录 x.com 的 Chrome 开发者工具复制 auth_token 与 ct0，执行：python3 fetch_x_evidence.py --add-cookie "my_x" "auth_token=xxx; ct0=yyy"',
             "db": str(db_path),
         }, ensure_ascii=False, indent=2), file=sys.stderr)
         return 2
