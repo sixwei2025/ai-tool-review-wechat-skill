@@ -234,7 +234,8 @@ def validate_json(article_path: Path, max_paragraph: int, min_images: int | None
 
 
 # 证据口径规则：只匹配字面形态，命中即「疑似」，真伪与语境由人对照 00-real-run-proof.md 与原始材料判断。
-# 合规提示（OK cues）按全文判断：同篇出现即视为已交代，因此一句交代会覆盖同规则的全部命中。
+# 合规提示（OK cues）只在命中所在的同一段（Markdown 一行）内生效；别处的交代不会抵消这一段的宣称。
+# 同段带「反例 / 不要写成」等标签、且命中落在引号内的，记为示例（evidence.examples），不计入 counts。
 _EVIDENCE_PATTERNS = {
     "E1_曝光标口径": re.compile(r"\d[\d,\.]*\s*(?:万|亿|k|K)?\s*次?\s*曝光"),
     "E2_曝光当阅读": re.compile(
@@ -260,11 +261,14 @@ _EVIDENCE_OK_CUES = {
 _EVIDENCE_MESSAGES = {
     "E1_曝光标口径": "证据口径 E1：出现曝光数字（命中：{sample}），请标明它是本帖 API 曝光，不是正文阅读量。",
     "E2_曝光当阅读": "证据口径 E2：疑似把曝光当阅读 / 反推打开率；命中：{sample}",
-    "E3_视频宣称": "证据口径 E3：出现「{sample}」类视频效果描述，同篇未见「视频效果未验证」。未看视频不得写成已验证。",
+    "E3_视频宣称": "证据口径 E3：出现「{sample}」类视频效果描述，同段未见「视频效果未验证」。未看视频不得写成已验证。",
     "E4_未取得资产当已读": "证据口径 E4：疑似把未取得的包 / 课件写成已读；命中：{sample}",
-    "E5_伪造I_O": "证据口径 E5：正文出现「终端返回 / 回显」式输出行（{count} 处），须与 00-real-run-proof.md 的回执逐行对得上；脚本无法判断真伪。",
-    "E6_第三方交易推荐": "证据口径 E6：正文提到「{sample}」等第三方获取路径，同篇未见风险提示。请补一句价格与可用性未核、不构成推荐；提到中转本身不算违规。",
+    "E5_伪造I_O": "证据口径 E5：正文出现「终端返回 / 回显」式输出行（{count} 处），须与 00-real-run-proof.md 的回执逐行对得上；这只是提示信号，不能证明真跑。",
+    "E6_第三方交易推荐": "证据口径 E6：正文提到「{sample}」等第三方获取路径，同段未见风险提示。请补一句价格与可用性未核、不构成推荐；提到中转本身不算违规。",
 }
+
+_EXAMPLE_LABELS = ("反例", "错误写法", "错误示范", "不要写", "别写", "不得写", "禁止写", "不能写")
+_QUOTE_SPAN = re.compile(r"「[^」\n]*」|『[^』\n]*』|“[^”\n]*”|\"[^\"\n]*\"")
 
 QUOTE_MIN_CHARS = 120
 QUOTE_HARD_CHARS = 300
@@ -276,11 +280,20 @@ def evidence_corpus(text: str) -> str:
     return text
 
 
-def _rule_hits(rule: str, flat: str) -> list[str]:
-    hits = [m.group(0) for m in _EVIDENCE_PATTERNS[rule].finditer(flat)]
-    if hits and any(c in flat for c in _EVIDENCE_OK_CUES.get(rule, ())):
-        return []
-    return hits
+def _rule_hits(rule: str, paragraphs: list[str]) -> tuple[list[str], list[str]]:
+    """返回（计数命中, 标注示例命中）；合规提示与反例标签都只看命中所在段。"""
+    hits: list[str] = []
+    examples: list[str] = []
+    for para in paragraphs:
+        matches = list(_EVIDENCE_PATTERNS[rule].finditer(para))
+        if not matches or any(c in para for c in _EVIDENCE_OK_CUES.get(rule, ())):
+            continue
+        labeled = any(label in para for label in _EXAMPLE_LABELS)
+        spans = [q.span() for q in _QUOTE_SPAN.finditer(para)] if labeled else []
+        for m in matches:
+            in_quote = any(s <= m.start() < e for s, e in spans)
+            (examples if in_quote else hits).append(m.group(0))
+    return hits, examples
 
 
 def check_quotes(body: str) -> list[str]:
@@ -295,13 +308,16 @@ def check_quotes(body: str) -> list[str]:
     return out
 
 
-def check_evidence(text: str) -> tuple[dict[str, int], list[str]]:
+def check_evidence(text: str) -> tuple[dict[str, int], list[str], dict[str, int]]:
     body = evidence_corpus(text)
-    flat = re.sub(r"\s+", " ", body)
+    paragraphs = [re.sub(r"\s+", " ", line).strip() for line in body.splitlines() if line.strip()]
     counts: dict[str, int] = {}
     messages: list[str] = []
+    examples: dict[str, int] = {}
     for rule in _EVIDENCE_PATTERNS:
-        hits = _rule_hits(rule, flat)
+        hits, labeled = _rule_hits(rule, paragraphs)
+        if labeled:
+            examples[rule] = len(labeled)
         if not hits:
             continue
         counts[rule] = len(hits)
@@ -311,7 +327,7 @@ def check_evidence(text: str) -> tuple[dict[str, int], list[str]]:
     if quote_msgs:
         counts["E7_他人全文搬运"] = len(quote_msgs)
         messages.extend(quote_msgs)
-    return counts, messages
+    return counts, messages, examples
 
 
 class _UsageParser(argparse.ArgumentParser):
@@ -353,7 +369,8 @@ def main() -> int:
     article_text = ""
     if args.article:
         try:
-            article_text = strip_tags(json.loads(Path(args.article).read_text(encoding="utf-8")).get("content", ""))
+            content = json.loads(Path(args.article).read_text(encoding="utf-8")).get("content", "")
+            article_text = strip_tags(re.sub(r"</p>|</section>|<br\s*/?>", "\n", content, flags=re.I))
         except (json.JSONDecodeError, UnicodeDecodeError, AttributeError) as exc:
             return _io_fail(f"--article 不是有效的草稿 JSON：{exc}")
 
@@ -375,7 +392,7 @@ def main() -> int:
                     )
 
     corpus = Path(args.md).read_text(encoding="utf-8") if args.md else article_text
-    ev_counts, ev_messages = check_evidence(corpus)
+    ev_counts, ev_messages, ev_examples = check_evidence(corpus)
     if args.strict_evidence:
         errors.extend(ev_messages)
 
@@ -392,6 +409,7 @@ def main() -> int:
             "strict": bool(args.strict_evidence),
             "counts": ev_counts,
             "warnings": ev_messages,
+            "examples": ev_examples,
         },
     }
     if not payload["ok"]:

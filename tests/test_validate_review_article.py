@@ -300,13 +300,79 @@ class EvidenceFalsePositives(_TmpDir):
     def test_reading_time_is_not_exposure(self):
         self.assertEqual(self.counts("全文大约 8 分钟读完，建议收藏后慢慢看。"), {})
 
-    def test_labeled_counterexample_still_warns(self):
-        # Quoting a bad phrase as a labeled counter-example is still matched; this is advisory only.
-        self.assertIn("E2_曝光当阅读", self.counts("反例：不要写「96 万阅读」，要写本帖曝光。"))
-
     def test_fake_io_pattern_only_flags_presence(self):
         # E5 cannot tell a real terminal line from an invented one; both are flagged for human comparison.
         self.assertIn("E5_伪造I_O", self.counts("终端返回：`ok`，与 00-real-run-proof.md 第 3 行一致。"))
+
+
+class EvidenceLocality(_TmpDir):
+    """Disclosures and counter-example labels only apply to the paragraph (Markdown line) they are in."""
+
+    def evidence(self, body: str, *extra: str) -> tuple[int, dict]:
+        md = self.write("03-review.md", "## 正文\n" + body + "\n")
+        r = run("--md", str(md), "--evidence-only", *extra)
+        return r.returncode, json.loads(r.stdout if r.returncode == 0 else r.stderr)["evidence"]
+
+    def test_disclosure_at_top_does_not_cover_later_watched_claim(self):
+        _, ev = self.evidence("本次没有视频，视频效果未验证。\n\n中间是一段无关的正文叙述。\n\n后来我把视频逐个看完了，口型对得很准。")
+        self.assertIn("E3_视频宣称", ev["counts"])
+
+    def test_long_unrelated_disclosure_does_not_cover_other_paragraphs(self):
+        disclosure = "声明：视频效果未验证，资料包未取得，价格与可用性未核，不构成推荐，本帖曝光不是正文阅读量。" * 3
+        _, ev = self.evidence(
+            disclosure + "\n\n课件我全部看完了。\n\n去买个邀请码就能白嫖额度。\n\n运镜很稳。\n\n这条帖有 142,925 次曝光。"
+        )
+        for rule in ("E1_曝光标口径", "E3_视频宣称", "E4_未取得资产当已读", "E6_第三方交易推荐"):
+            self.assertIn(rule, ev["counts"])
+
+    def test_same_paragraph_not_verified_narration_is_clean(self):
+        code, ev = self.evidence("静帧里口型看着对得上，但我没看视频，视频效果未验证，不对运镜下结论。", "--strict-evidence")
+        self.assertEqual(code, 0)
+        self.assertEqual(ev["counts"], {})
+
+    def test_labeled_quoted_counterexample_does_not_fail_strict(self):
+        code, ev = self.evidence("反例：不要写成「96 万阅读」，要写本帖 API 曝光。", "--strict-evidence")
+        self.assertEqual(code, 0)
+        self.assertEqual(ev["counts"], {})
+        self.assertEqual(ev["examples"], {"E2_曝光当阅读": 1})
+
+    def test_dont_write_quoted_bad_example(self):
+        code, ev = self.evidence("不要写成「终端返回：Build completed」这种回执里没有的输出。", "--strict-evidence")
+        self.assertEqual(code, 0)
+        self.assertEqual(ev["examples"], {"E5_伪造I_O": 1})
+
+    def test_mixed_example_and_affirmative_claim_still_counts(self):
+        code, ev = self.evidence("反例：不要写「96 万阅读」。不过这条帖确实有 50 万阅读。", "--strict-evidence")
+        self.assertEqual(code, 2)
+        self.assertEqual(ev["counts"], {"E2_曝光当阅读": 1})
+        self.assertEqual(ev["examples"], {"E2_曝光当阅读": 1})
+
+    def test_quoted_claim_without_label_still_counts(self):
+        _, ev = self.evidence("评论区都在说「96 万阅读」。")
+        self.assertIn("E2_曝光当阅读", ev["counts"])
+
+    def test_known_limit_same_paragraph_contradiction_is_missed(self):
+        # Paragraph scope cannot see a contradiction inside one paragraph; a human reviewer must catch it.
+        _, ev = self.evidence("视频效果未验证。但我其实逐个看完了，口型很准。")
+        self.assertEqual(ev["counts"], {})
+
+    def test_paragraphs_from_article_json_are_separate(self):
+        art = self.write(
+            "a.json",
+            json.dumps(
+                {"title": "t", "content": "<p>视频效果未验证。</p><p>我逐个看完了，口型很准。</p>"}, ensure_ascii=False
+            ),
+        )
+        out = json.loads(run("--article", str(art)).stdout)
+        self.assertIn("E3_视频宣称", out["evidence"]["counts"])
+
+
+class SyntheticFixtureLabels(unittest.TestCase):
+    def test_good_fixture_is_labeled_synthetic(self):
+        text = (FIXTURES / "good-evidence-discipline.md").read_text(encoding="utf-8")
+        self.assertIn("合成测试输入", text)
+        for real_value in ("10.01", "48.5", "WorkBuddy", "DeepSeek"):
+            self.assertNotIn(real_value, text)
 
 
 if __name__ == "__main__":
