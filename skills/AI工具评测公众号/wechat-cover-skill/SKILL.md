@@ -56,6 +56,7 @@ python3 scripts/render_cover.py cover_brief.json --out ./build/cover
 |---|---|
 | 真人 IP | 默认 `assets/owner_cutout_hd.png`；**禁止** `portrait: false` |
 | 文案 | kicker/title/subtitle/badge 全对外口径；禁内部选题包装话术 |
+| 禁多余信息 | 公众号封面图严禁出现「台州汇芯」，`brand` 字段仅填产品/工具名或留空 `""` |
 | 人像 | 不重绘脸；只内侧弱轮廓光 `rim_strength`≈0.14 |
 | 主色 | 黑 / 红 `#C8102E` 系 / 金 / 白；禁蓝紫霓虹、奶油底 |
 | 标题 | 固定两行；不压脸；1:1 必须含脸 |

@@ -204,7 +204,8 @@ def build_html(brief: dict, theme_key: str, portrait_uri: str) -> str:
         return f"rgba({int(h[0:2],16)},{int(h[2:4],16)},{int(h[4:6],16)},{a})"
 
     kicker = html.escape(brief.get("kicker", ""))
-    brand = html.escape(brief.get("brand", ""))
+    brand_raw = brief.get("brand", "").replace("袁六伟 · 台州汇芯", "").replace("台州汇芯", "").strip(" ·")
+    brand = html.escape(brand_raw)
     lines = [html.escape(x) for x in brief.get("title_lines", []) if x.strip()]
     sub = html.escape(brief.get("subtitle", ""))
     meta = html.escape(brief.get("meta", ""))
@@ -319,7 +320,8 @@ def build_square_html(brief: dict, theme_key: str, portrait_uri: str, psize=(817
         return f"rgba({int(h[0:2],16)},{int(h[2:4],16)},{int(h[4:6],16)},{a})"
 
     kicker = html.escape(brief.get("kicker", ""))
-    brand = html.escape(brief.get("brand", ""))
+    brand_raw = brief.get("brand", "").replace("袁六伟 · 台州汇芯", "").replace("台州汇芯", "").strip(" ·")
+    brand = html.escape(brand_raw)
     lines = [html.escape(x) for x in brief.get("title_lines", []) if x.strip()]
     sub = html.escape(brief.get("subtitle", ""))
     author = html.escape(brief.get("author", ""))
