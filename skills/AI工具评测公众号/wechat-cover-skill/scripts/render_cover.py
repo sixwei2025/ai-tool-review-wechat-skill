@@ -398,6 +398,8 @@ def main():
         d.text((x0 + px_ - bx[0], y0 + py_ - bx[1]), badge, font=fnt, fill=pal.get("badge_text", "#FFFFFF"))
         im.save(master)
     ex_w, ex_h = r["export"]
+    hd_jpg = out / "cover_2350x1000.jpg"
+    im.save(hd_jpg, "JPEG", quality=95, optimize=True, progressive=True, subsampling=0)
     jpg = out / "cover_900x383.jpg"
     im.resize((ex_w, ex_h), Image.LANCZOS).save(jpg, "JPEG", quality=92, optimize=True, progressive=True)
     if jpg.stat().st_size >= r["export_max_bytes"]: errs.append("导出 JPG ≥ 1MB")
@@ -418,9 +420,9 @@ def main():
             "portrait_scale": round(s, 3),
             "bg_brightness": float(b.get("bg_brightness", 0.62 if fullbleed else 1.0)),
             "text_shade": text_shade, "bg_blur": float(b.get("bg_blur", 8 if fullbleed else 0)),
-            "jpg_kb": jpg.stat().st_size // 1024, "qa": qa, "errors": errs, "warnings": warns}
+            "jpg_kb": jpg.stat().st_size // 1024, "jpg_hd_kb": hd_jpg.stat().st_size // 1024, "qa": qa, "errors": errs, "warnings": warns}
     (out / "cover.meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(json.dumps({"ok": not errs, "errors": errs, "warnings": warns, "jpg": str(jpg), "jpg_kb": meta["jpg_kb"], "sheet": str(out / "cover_sheet.png"), "layout": layout}, ensure_ascii=False, indent=2))
+    print(json.dumps({"ok": not errs, "errors": errs, "warnings": warns, "jpg": str(jpg), "jpg_kb": meta["jpg_kb"], "jpg_hd": str(hd_jpg), "jpg_hd_kb": meta["jpg_hd_kb"], "sheet": str(out / "cover_sheet.png"), "layout": layout}, ensure_ascii=False, indent=2))
     sys.exit(2 if errs else 0)
 
 if __name__ == "__main__":
