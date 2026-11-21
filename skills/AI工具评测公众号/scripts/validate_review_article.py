@@ -12,6 +12,16 @@ AI 评测公众号 2.0 · 一体化硬闸校验器 (`validate_review_article.py`
 
 用法：
   python3 validate_review_article.py --article article.local-images.json --md 03-review.md
+
+证据口径检查（E1–E7，字符串匹配，只提示「疑似」，不判断事实真伪）：
+  默认只写入输出 JSON 的 `evidence` 字段，不进入 errors / warnings，不改变上面五道硬闸的结论；
+  `--strict-evidence` 时升级为 errors；`--evidence-only --md 03-review.md` 只跑证据层（不代表排版与真跑回执已通过）。
+
+退出码：
+  0  通过（stdout 为 JSON，"status": "pass"）
+  1  输入文件不存在或 JSON 无法解析（stderr 首行 `[IO]`）
+  2  参数用错，未做任何校验（stderr 首行 `[USAGE]`）
+  2  校验跑完但未通过（stderr 为 JSON，"status": "fail"）
 """
 import argparse
 import json
@@ -223,35 +233,184 @@ def validate_json(article_path: Path, max_paragraph: int, min_images: int | None
     return errors, warnings
 
 
+# 证据口径规则：只匹配字面形态，命中即「疑似」，真伪与语境由人对照 00-real-run-proof.md 与原始材料判断。
+# 合规提示（OK cues）只在命中所在的同一段（Markdown 一行）内生效；别处的交代不会抵消这一段的宣称。
+# 同段带「反例 / 不要写成」等标签、且命中落在引号内的，记为示例（evidence.examples），不计入 counts。
+_EVIDENCE_PATTERNS = {
+    "E1_曝光标口径": re.compile(r"\d[\d,\.]*\s*(?:万|亿|k|K)?\s*次?\s*曝光"),
+    "E2_曝光当阅读": re.compile(
+        r"(?:\d[\d,\.]*)\s*(?:万|亿|k|K)?\s*(?:阅读量|阅读数|阅读|打开率|完读率)"
+        r"|(?:阅读量|阅读数|打开率|完读率)[^。\n]{0,12}?\d"
+    ),
+    "E3_视频宣称": re.compile(r"(?:口型|运镜|字幕对齐|动作衔接|画面流畅|看完视频|逐个看完)"),
+    "E4_未取得资产当已读": re.compile(
+        r"(?:扫码包|资料包|课件|开箱库|网盘|评论区链接)[^。\n]{0,20}?(?:都看过了|已读|全部看完|照着填就行)"
+        r"|(?:看过了|已读|看完)\s*(?:扫码包|资料包|课件|开箱库)"
+    ),
+    "E5_伪造I_O": re.compile(r"(?:终端返回|控制台返回|命令行返回|回显)[：:]\s*[`\"「]?[^\n`\"」]{2,}"),
+    "E6_第三方交易推荐": re.compile(r"(?:邀请码|代注册|中转站|中转|白嫖|签到送|一元起|1\.88)"),
+}
+
+_EVIDENCE_OK_CUES = {
+    "E1_曝光标口径": ("本节曝光", "本帖曝光", "API 曝光", "该帖曝光", "曝光不是阅读", "不是正文阅读"),
+    "E3_视频宣称": ("视频效果未验证", "未看视频", "视频未看", "没看视频"),
+    "E4_未取得资产当已读": ("未取得", "没有取得", "未拿到", "不能写成已读", "未读"),
+    "E6_第三方交易推荐": ("风险", "不建议", "不构成推荐", "未核", "未验证", "对不上", "落差", "不作为实操范本"),
+}
+
+_EVIDENCE_MESSAGES = {
+    "E1_曝光标口径": "证据口径 E1：出现曝光数字（命中：{sample}），请标明它是本帖 API 曝光，不是正文阅读量。",
+    "E2_曝光当阅读": "证据口径 E2：疑似把曝光当阅读 / 反推打开率；命中：{sample}",
+    "E3_视频宣称": "证据口径 E3：出现「{sample}」类视频效果描述，同段未见「视频效果未验证」。未看视频不得写成已验证。",
+    "E4_未取得资产当已读": "证据口径 E4：疑似把未取得的包 / 课件写成已读；命中：{sample}",
+    "E5_伪造I_O": "证据口径 E5：正文出现「终端返回 / 回显」式输出行（{count} 处），须与 00-real-run-proof.md 的回执逐行对得上；这只是提示信号，不能证明真跑。",
+    "E6_第三方交易推荐": "证据口径 E6：正文提到「{sample}」等第三方获取路径，同段未见风险提示。请补一句价格与可用性未核、不构成推荐；提到中转本身不算违规。",
+}
+
+_EXAMPLE_LABELS = ("反例", "错误写法", "错误示范", "不要写", "别写", "不得写", "禁止写", "不能写")
+_QUOTE_SPAN = re.compile(r"「[^」\n]*」|『[^』\n]*』|“[^”\n]*”|\"[^\"\n]*\"")
+
+QUOTE_MIN_CHARS = 120
+QUOTE_HARD_CHARS = 300
+
+
+def evidence_corpus(text: str) -> str:
+    if "## 正文" in text:
+        text = text.split("## 正文", 1)[1]
+    return text
+
+
+def _rule_hits(rule: str, paragraphs: list[str]) -> tuple[list[str], list[str]]:
+    """返回（计数命中, 标注示例命中）；合规提示与反例标签都只看命中所在段。"""
+    hits: list[str] = []
+    examples: list[str] = []
+    for para in paragraphs:
+        matches = list(_EVIDENCE_PATTERNS[rule].finditer(para))
+        if not matches or any(c in para for c in _EVIDENCE_OK_CUES.get(rule, ())):
+            continue
+        labeled = any(label in para for label in _EXAMPLE_LABELS)
+        spans = [q.span() for q in _QUOTE_SPAN.finditer(para)] if labeled else []
+        for m in matches:
+            in_quote = any(s <= m.start() < e for s, e in spans)
+            (examples if in_quote else hits).append(m.group(0))
+    return hits, examples
+
+
+def check_quotes(body: str) -> list[str]:
+    """E7：连续引用块超过 120 字且块内无来源 url。"""
+    out: list[str] = []
+    for block in re.findall(r"(?m)^(?:>.*(?:\n|$))+", body):
+        quoted = re.sub(r"(?m)^>\s?", "", block).strip()
+        if len(quoted) < QUOTE_MIN_CHARS or re.search(r"https?://", quoted):
+            continue
+        level = f"超过 {QUOTE_HARD_CHARS} 字，公开稿不应出现" if len(quoted) > QUOTE_HARD_CHARS else f"超过 {QUOTE_MIN_CHARS} 字"
+        out.append(f"证据口径 E7：连续引用块 {len(quoted)} 字且未见来源 url（{level}）；公开稿只允许必要一句 + 来源 + 自己的解读。")
+    return out
+
+
+def check_evidence(text: str) -> tuple[dict[str, int], list[str], dict[str, int]]:
+    body = evidence_corpus(text)
+    paragraphs = [re.sub(r"\s+", " ", line).strip() for line in body.splitlines() if line.strip()]
+    counts: dict[str, int] = {}
+    messages: list[str] = []
+    examples: dict[str, int] = {}
+    for rule in _EVIDENCE_PATTERNS:
+        hits, labeled = _rule_hits(rule, paragraphs)
+        if labeled:
+            examples[rule] = len(labeled)
+        if not hits:
+            continue
+        counts[rule] = len(hits)
+        sample = "、".join(list(dict.fromkeys(hits))[:3])
+        messages.append(_EVIDENCE_MESSAGES[rule].format(sample=sample, count=len(hits)))
+    quote_msgs = check_quotes(body)
+    if quote_msgs:
+        counts["E7_他人全文搬运"] = len(quote_msgs)
+        messages.extend(quote_msgs)
+    return counts, messages, examples
+
+
+class _UsageParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        sys.stderr.write(f"[USAGE] {message}\n")
+        self.print_usage(sys.stderr)
+        raise SystemExit(2)
+
+
+def _io_fail(message: str) -> int:
+    print(f"[IO] {message}", file=sys.stderr)
+    return 1
+
+
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Validate AI Tool Review WeChat article JSON and Markdown.")
-    ap.add_argument("--article", required=True, help="转换并装配外壳后的草稿 JSON")
+    ap = _UsageParser(description="Validate AI Tool Review WeChat article JSON and Markdown.")
+    ap.add_argument("--article", default="", help="转换并装配外壳后的草稿 JSON（除 --evidence-only 外必填）")
     ap.add_argument("--md", default="", help="可选：原始 Markdown 稿，用于跑反电报碎句与说人话校验")
     ap.add_argument("--max-paragraph", type=int, default=DEFAULT_MAX_PARAGRAPH)
     ap.add_argument("--min-images", type=int, default=None)
     ap.add_argument("--strict-warnings", action="store_true")
     ap.add_argument("--skip-proof", action="store_true", help="跳过 00-real-run-proof.md 真跑回执检查")
+    ap.add_argument(
+        "--strict-evidence", action="store_true", help="证据口径 E1–E7 命中时计入 errors（默认只写入 evidence 字段）"
+    )
+    ap.add_argument(
+        "--evidence-only",
+        action="store_true",
+        help="只跑证据口径检查（需 --md 或 --article）；不跑排版、说人话与真跑回执检查，结果不代表这些已通过",
+    )
     args = ap.parse_args()
 
-    errors, warnings = validate_json(Path(args.article), args.max_paragraph, args.min_images)
-    metrics = {}
-    if args.md and Path(args.md).is_file():
-        md_path = Path(args.md)
-        md_err, md_warn, metrics = check_markdown_tone(md_path)
-        errors.extend(md_err)
-        warnings.extend(md_warn)
-        if not args.skip_proof:
-            proof_path = md_path.parent / "00-real-run-proof.md"
-            if not proof_path.is_file() or len(proof_path.read_text(encoding="utf-8").strip()) < 120:
-                errors.append(
-                    "真跑验货拦截：工程目录缺少完整的 00-real-run-proof.md 真跑回执（禁止无实测纯整理稿推草稿箱）"
-                )
+    if not args.article and not (args.evidence_only and args.md):
+        ap.error("--article is required (only --evidence-only may run on --md alone)")
+    if args.article and not Path(args.article).is_file():
+        return _io_fail(f"--article 文件不存在：{args.article}")
+    if args.md and not Path(args.md).is_file():
+        return _io_fail(f"--md 文件不存在：{args.md}")
+    article_text = ""
+    if args.article:
+        try:
+            content = json.loads(Path(args.article).read_text(encoding="utf-8")).get("content", "")
+            article_text = strip_tags(re.sub(r"</p>|</section>|<br\s*/?>", "\n", content, flags=re.I))
+        except (json.JSONDecodeError, UnicodeDecodeError, AttributeError) as exc:
+            return _io_fail(f"--article 不是有效的草稿 JSON：{exc}")
 
+    errors: list[str] = []
+    warnings: list[str] = []
+    metrics = {}
+    if not args.evidence_only:
+        errors, warnings = validate_json(Path(args.article), args.max_paragraph, args.min_images)
+        if args.md:
+            md_path = Path(args.md)
+            md_err, md_warn, metrics = check_markdown_tone(md_path)
+            errors.extend(md_err)
+            warnings.extend(md_warn)
+            if not args.skip_proof:
+                proof_path = md_path.parent / "00-real-run-proof.md"
+                if not proof_path.is_file() or len(proof_path.read_text(encoding="utf-8").strip()) < 120:
+                    errors.append(
+                        "真跑验货拦截：工程目录缺少完整的 00-real-run-proof.md 真跑回执（禁止无实测纯整理稿推草稿箱）"
+                    )
+
+    corpus = Path(args.md).read_text(encoding="utf-8") if args.md else article_text
+    ev_counts, ev_messages, ev_examples = check_evidence(corpus)
+    if args.strict_evidence:
+        errors.extend(ev_messages)
+
+    ok = len(errors) == 0 and not (args.strict_warnings and warnings)
     payload = {
-        "ok": len(errors) == 0 and not (args.strict_warnings and warnings),
+        "ok": ok,
+        "status": "pass" if ok else "fail",
         "errors": errors,
         "warnings": warnings,
         "metrics": metrics,
+        "evidence": {
+            "scope": "evidence-only" if args.evidence_only else "full",
+            "source": "md" if args.md else "article",
+            "strict": bool(args.strict_evidence),
+            "counts": ev_counts,
+            "warnings": ev_messages,
+            "examples": ev_examples,
+        },
     }
     if not payload["ok"]:
         print(json.dumps(payload, ensure_ascii=False, indent=2), file=sys.stderr)
